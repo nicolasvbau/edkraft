@@ -1,0 +1,366 @@
+.diagnostico-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding: 32px 24px 80px;
+}
+
+.diagnostico-container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Progress */
+.diag-progress-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.diag-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-card);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.diag-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.diag-progress-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Section header */
+.diag-section-header {
+  margin-bottom: 32px;
+}
+
+.diag-section-number {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.diag-section-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.diag-section-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Question card */
+.diag-question-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 28px;
+}
+
+.diag-question-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+/* Options */
+.diag-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.diag-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 16px 18px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.diag-option:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.diag-option.selected {
+  border-color: var(--accent-blue);
+  background: var(--accent-blue-bg);
+  color: var(--text-primary);
+}
+
+.diag-option-letter {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.diag-option.selected .diag-option-letter {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #fff;
+}
+
+.diag-option-text {
+  flex: 1;
+}
+
+/* Navigation */
+.diag-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.diag-btn-back:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.diag-btn-next:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ===== RESULTS ===== */
+.resultado-header {
+  text-align: center;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.resultado-titulo {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.resultado-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+.resultado-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.resultado-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  transition: all 0.25s ease;
+}
+
+.resultado-card:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.resultado-card-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.resultado-rank {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--accent-blue-bg);
+  color: var(--accent-blue);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.resultado-area-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.resultado-icon {
+  font-size: 22px;
+}
+
+.resultado-area {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.resultado-match {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.resultado-bar-track {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.resultado-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resultado-profissoes {
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.resultado-prof-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.resultado-prof-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resultado-prof-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.resultado-prof-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.resultado-prof-salario {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-teal);
+}
+
+.resultado-acoes {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.resultado-disclaimer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .diagnostico-page {
+    padding: 24px 16px 60px;
+  }
+
+  .diag-section-title {
+    font-size: 26px;
+  }
+
+  .diag-question-card {
+    padding: 22px;
+  }
+
+  .diag-question-text {
+    font-size: 16px;
+  }
+
+  .diag-option {
+    padding: 14px 14px;
+    font-size: 14px;
+  }
+
+  .resultado-titulo {
+    font-size: 28px;
+  }
+
+  .resultado-acoes {
+    flex-direction: column;
+  }
+
+  .resultado-acoes .btn {
+    width: 100%;
+  }
+}
