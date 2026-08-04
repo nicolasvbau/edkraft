@@ -82,8 +82,7 @@ export default function Navbar() {
 
   function sair() {
     deslogar()
-    setAuth(readAuth())
-    navigate('/')
+    window.location.href = '/'
   }
 
   const links = auth.tipo === 'aluno' ? LINKS_ALUNO

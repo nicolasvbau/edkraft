@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { alunoLogado, deslogar } from '../lib/auth'
 import './Perfil.css'
@@ -19,10 +18,11 @@ const FORM_INICIAL = {
 }
 
 export default function Perfil() {
-  const navigate = useNavigate()
   const aluno = alunoLogado()
   const [form, setForm] = useLocalStorage('edkraft:perfilExtra', FORM_INICIAL)
   const [saved, setSaved] = useState(false)
+
+  if (!aluno) return null
 
   function handleChange(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
@@ -43,7 +43,7 @@ export default function Perfil() {
 
   function confirmarSair() {
     deslogar()
-    navigate('/', { replace: true })
+    window.location.href = '/'
   }
 
   function cancelarSair() {
