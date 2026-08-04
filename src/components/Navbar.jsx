@@ -80,8 +80,8 @@ export default function Navbar() {
     navigate(path)
   }
 
-  function sair() {
-    deslogar()
+  async function sair() {
+    await deslogar()
     window.location.href = '/'
   }
 

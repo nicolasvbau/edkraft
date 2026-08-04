@@ -153,6 +153,49 @@
   line-height: 1.45;
 }
 
+.entrar-aviso {
+  padding: 11px 14px;
+  background: var(--accent-blue-bg);
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: var(--radius-sm);
+  color: var(--accent-blue);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.entrar-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin: 24px 0 8px;
+}
+
+.entrar-tab {
+  flex: 1;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.entrar-tab:hover {
+  color: var(--text-primary);
+}
+
+.entrar-tab.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-xs);
+}
+
 .entrar-rodape-mini {
   margin-top: 20px;
   font-size: 12px;

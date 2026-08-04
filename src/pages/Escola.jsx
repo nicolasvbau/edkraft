@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarTurmas, criarTurma, removerTurma } from '../lib/turma'
-import { professorLogadoNovo } from '../lib/auth'
+import { professorLogadoNovo, deslogar } from '../lib/auth'
 import './Escola.css'
 
 export default function Escola() {
@@ -13,37 +13,41 @@ export default function Escola() {
   const [novaTurma, setNovaTurma] = useState({ nome: '', serie: '' })
 
   useEffect(() => {
-    if (!prof) return
+    if (!prof?.id) return
     let cancelled = false
     setCarregando(true)
-    listarTurmas({ professor: prof.nome, escola: prof.escola }).then(t => {
+    listarTurmas({ professorId: prof.id }).then(t => {
       if (!cancelled) {
         setTurmas(t)
         setCarregando(false)
       }
     })
     return () => { cancelled = true }
-  }, [prof?.nome, prof?.escola])
+  }, [prof?.id])
 
   async function criar(e) {
     e.preventDefault()
     if (!novaTurma.nome.trim() || !novaTurma.serie.trim()) return
-    await criarTurma({
-      nome: novaTurma.nome,
-      serie: novaTurma.serie,
-      escola: prof.escola,
-      professor: prof.nome,
-    })
-    const atual = await listarTurmas({ professor: prof.nome, escola: prof.escola })
-    setTurmas(atual)
-    setNovaTurma({ nome: '', serie: '' })
-    setModo('lista')
+    try {
+      await criarTurma({
+        nome: novaTurma.nome,
+        serie: novaTurma.serie,
+        escola: prof.escola,
+        professorId: prof.id,
+      })
+      const atual = await listarTurmas({ professorId: prof.id })
+      setTurmas(atual)
+      setNovaTurma({ nome: '', serie: '' })
+      setModo('lista')
+    } catch (err) {
+      alert('Erro ao criar turma: ' + err.message)
+    }
   }
 
   async function excluir(codigo) {
     if (!confirm('Excluir esta turma? Os resultados associados também serão apagados.')) return
     await removerTurma(codigo)
-    const atual = await listarTurmas({ professor: prof.nome, escola: prof.escola })
+    const atual = await listarTurmas({ professorId: prof.id })
     setTurmas(atual)
   }
 
@@ -56,6 +60,15 @@ export default function Escola() {
             <h1 className="escola-title">Olá, {prof.nome}</h1>
             <p className="escola-desc">{prof.escola}</p>
           </div>
+          <button
+            className="escola-sair-btn"
+            onClick={async () => {
+              await deslogar()
+              window.location.href = '/'
+            }}
+          >
+            Sair da conta
+          </button>
         </div>
 
         <section className="escola-nova-turma">

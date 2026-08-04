@@ -2,7 +2,6 @@ import { supabase, isSupabaseEnabled } from './supabase'
 
 const TURMAS_KEY = 'edkraft:turmas'
 const RESULTS_KEY = 'edkraft:diagResultados'
-const PROF_KEY = 'edkraft:professor'
 
 function readJson(key, fallback) {
   try {
@@ -33,67 +32,61 @@ export function gerarCodigoTurma() {
 
 /* ================= TURMAS ================= */
 
-export async function listarTurmas({ professor, escola } = {}) {
+export async function listarTurmas({ professorId } = {}) {
   if (isSupabaseEnabled()) {
     let q = supabase.from('turmas').select('*').order('criada_em', { ascending: false })
-    if (professor) q = q.eq('professor', professor)
-    if (escola) q = q.eq('escola', escola)
+    if (professorId) q = q.eq('professor_id', professorId)
     const { data, error } = await q
     if (error) {
       console.warn('Supabase listarTurmas:', error.message)
-      return listarTurmasLocal({ professor, escola })
+      return []
     }
     return (data || []).map(fromRowTurma)
   }
-  return listarTurmasLocal({ professor, escola })
+  return readJson(TURMAS_KEY, [])
 }
 
-function listarTurmasLocal({ professor, escola } = {}) {
-  let all = readJson(TURMAS_KEY, [])
-  if (professor) all = all.filter(t => t.professor === professor)
-  if (escola) all = all.filter(t => t.escola === escola)
-  return all
-}
+export async function criarTurma({ nome, escola, serie, professorId }) {
+  if (!professorId) throw new Error('professorId obrigatório pra criar turma')
 
-export async function criarTurma({ nome, escola, serie, professor }) {
   const nova = {
     codigo: gerarCodigoTurma(),
     nome: nome.trim(),
     escola: escola.trim(),
     serie: serie.trim(),
-    professor: professor.trim(),
+    professorId,
     criadaEm: new Date().toISOString(),
   }
 
   if (isSupabaseEnabled()) {
-    const row = toRowTurma(nova)
     let attempts = 0
     while (attempts < 5) {
-      const { error } = await supabase.from('turmas').insert(row)
+      const { error } = await supabase.from('turmas').insert(toRowTurma(nova))
       if (!error) break
       if (error.code === '23505') {
         nova.codigo = gerarCodigoTurma()
-        row.codigo = nova.codigo
         attempts++
         continue
       }
       console.warn('Supabase criarTurma:', error.message)
-      break
+      throw new Error(error.message)
     }
+  } else {
+    const locais = readJson(TURMAS_KEY, [])
+    writeJson(TURMAS_KEY, [nova, ...locais])
   }
-
-  const locais = readJson(TURMAS_KEY, [])
-  writeJson(TURMAS_KEY, [nova, ...locais.filter(t => t.codigo !== nova.codigo)])
   return nova
 }
 
 export async function removerTurma(codigo) {
   if (isSupabaseEnabled()) {
-    await supabase.from('turmas').delete().eq('codigo', codigo)
-    await supabase.from('resultados').delete().eq('turma_codigo', codigo)
+    const { error } = await supabase.from('turmas').delete().eq('codigo', codigo)
+    if (error) console.warn('Supabase removerTurma:', error.message)
+    // RLS delete de resultados vai bloquear anon, mas ON DELETE CASCADE cuida
+  } else {
+    writeJson(TURMAS_KEY, readJson(TURMAS_KEY, []).filter(t => t.codigo !== codigo))
+    writeJson(RESULTS_KEY, readJson(RESULTS_KEY, []).filter(r => r.turmaCodigo !== codigo))
   }
-  writeJson(TURMAS_KEY, readJson(TURMAS_KEY, []).filter(t => t.codigo !== codigo))
-  writeJson(RESULTS_KEY, readJson(RESULTS_KEY, []).filter(r => r.turmaCodigo !== codigo))
 }
 
 export async function buscarTurma(codigo) {
@@ -102,6 +95,7 @@ export async function buscarTurma(codigo) {
   if (isSupabaseEnabled()) {
     const { data, error } = await supabase.from('turmas').select('*').eq('codigo', code).maybeSingle()
     if (!error && data) return fromRowTurma(data)
+    return null
   }
   return readJson(TURMAS_KEY, []).find(t => t.codigo === code) || null
 }
@@ -116,39 +110,24 @@ export async function salvarResultado(resultado) {
       onConflict: 'turma_codigo,aluno_nome',
     })
     if (error) console.warn('Supabase salvarResultado:', error.message)
+  } else {
+    const locais = readJson(RESULTS_KEY, [])
+    const idx = locais.findIndex(
+      r => r.turmaCodigo === enriched.turmaCodigo && r.alunoNome === enriched.alunoNome
+    )
+    if (idx >= 0) locais[idx] = enriched
+    else locais.push(enriched)
+    writeJson(RESULTS_KEY, locais)
   }
-
-  const locais = readJson(RESULTS_KEY, [])
-  const idx = locais.findIndex(
-    r => r.turmaCodigo === enriched.turmaCodigo && r.alunoNome === enriched.alunoNome
-  )
-  if (idx >= 0) locais[idx] = enriched
-  else locais.push(enriched)
-  writeJson(RESULTS_KEY, locais)
 }
 
 export async function resultadosDaTurma(codigo) {
   if (isSupabaseEnabled()) {
     const { data, error } = await supabase.from('resultados').select('*').eq('turma_codigo', codigo)
     if (!error && data) return data.map(fromRowResultado)
+    return []
   }
   return readJson(RESULTS_KEY, []).filter(r => r.turmaCodigo === codigo)
-}
-
-/* ================= PROFESSOR ================= */
-
-export function professorLogado() {
-  return readJson(PROF_KEY, null)
-}
-
-export function logarProfessor(dados) {
-  writeJson(PROF_KEY, { ...dados, entrouEm: new Date().toISOString() })
-}
-
-export function deslogarProfessor() {
-  try {
-    localStorage.removeItem(PROF_KEY)
-  } catch {}
 }
 
 /* ================= AGREGADOR ================= */
@@ -177,7 +156,7 @@ function toRowTurma(t) {
     nome: t.nome,
     escola: t.escola,
     serie: t.serie,
-    professor: t.professor,
+    professor_id: t.professorId,
     criada_em: t.criadaEm,
   }
 }
@@ -188,7 +167,7 @@ function fromRowTurma(r) {
     nome: r.nome,
     escola: r.escola,
     serie: r.serie,
-    professor: r.professor,
+    professorId: r.professor_id,
     criadaEm: r.criada_em,
   }
 }

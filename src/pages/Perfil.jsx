@@ -41,8 +41,8 @@ export default function Perfil() {
     setConfirmandoSair(true)
   }
 
-  function confirmarSair() {
-    deslogar()
+  async function confirmarSair() {
+    await deslogar()
     window.location.href = '/'
   }
 
