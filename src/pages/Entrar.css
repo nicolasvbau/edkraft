@@ -1,26 +1,26 @@
 .entrar-page {
   min-height: 100vh;
   background: var(--bg-primary);
-  padding: 40px 20px 80px;
+  padding: 64px 20px 80px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
 }
 
 .entrar-container {
-  max-width: 900px;
+  max-width: 880px;
   width: 100%;
-  margin-top: 24px;
 }
 
 .entrar-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .entrar-title {
-  font-size: 36px;
-  font-weight: 800;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.7px;
   color: var(--text-primary);
   margin: 0 0 12px;
   line-height: 1.15;
@@ -28,70 +28,75 @@
 
 .entrar-desc {
   color: var(--text-secondary);
-  font-size: 16px;
-  line-height: 1.5;
-  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 500px;
   margin: 0 auto;
 }
 
 .entrar-opcoes {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .entrar-card {
-  padding: 32px 24px;
+  padding: 28px 24px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  gap: 10px;
+  transition: border-color var(--transition-base), background var(--transition-base), transform var(--transition-base);
   font-family: inherit;
+  min-height: 220px;
 }
 
 .entrar-card:hover {
-  transform: translateY(-4px);
+  border-color: var(--border-strong);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.entrar-card-aluno:hover {
   border-color: var(--accent-blue);
-  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.18);
 }
 
 .entrar-card-prof:hover {
   border-color: var(--accent-teal);
-  box-shadow: 0 12px 30px rgba(34, 197, 94, 0.18);
 }
 
 .entrar-emoji {
-  font-size: 40px;
+  font-size: 30px;
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .entrar-card-title {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
   margin: 0;
 }
 
 .entrar-card-desc {
   color: var(--text-secondary);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.55;
   margin: 0;
 }
 
 .entrar-card-req {
   margin-top: auto;
   padding-top: 14px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   font-weight: 600;
 }
 
@@ -99,65 +104,74 @@
   text-align: center;
   color: var(--text-tertiary);
   font-size: 13px;
-  margin-top: 32px;
+  margin-top: 36px;
 }
 
 .entrar-form-container {
-  max-width: 460px;
+  max-width: 420px;
   margin-top: 8px;
 }
 
 .entrar-back {
   background: none;
   border: none;
-  color: var(--text-secondary);
-  font-size: 14px;
+  color: var(--text-tertiary);
+  font-size: 13px;
   cursor: pointer;
-  padding: 6px 0;
-  margin-bottom: 16px;
-  transition: color 0.2s;
+  padding: 4px 0;
+  margin-bottom: 24px;
+  transition: color var(--transition-fast);
 }
 
 .entrar-back:hover {
-  color: var(--accent-blue);
+  color: var(--text-primary);
 }
 
 .entrar-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .entrar-codigo-input {
-  font-family: 'Courier New', monospace;
-  letter-spacing: 3px;
+  font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.entrar-erro {
-  padding: 12px 14px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: var(--radius-sm);
-  color: #ef4444;
-  font-size: 13px;
-}
-
-.entrar-rodape-mini {
-  margin-top: 16px;
-  font-size: 12px;
-  color: var(--text-tertiary);
+  font-weight: 600;
+  font-size: 17px;
   text-align: center;
 }
 
+.entrar-erro {
+  padding: 11px 14px;
+  background: var(--accent-red-bg);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  border-radius: var(--radius-sm);
+  color: var(--accent-red);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.entrar-rodape-mini {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: center;
+  line-height: 1.55;
+}
+
 @media (max-width: 640px) {
+  .entrar-page {
+    padding: 40px 16px 60px;
+  }
   .entrar-opcoes {
     grid-template-columns: 1fr;
   }
   .entrar-title {
-    font-size: 28px;
+    font-size: 26px;
+  }
+  .entrar-card {
+    min-height: auto;
   }
 }

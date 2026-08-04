@@ -35,10 +35,19 @@ export default function Perfil() {
     setTimeout(() => setSaved(false), 3000)
   }
 
-  function sair() {
-    if (!confirm('Sair da sua conta? Você vai ter que entrar de novo com o código da turma.')) return
+  const [confirmandoSair, setConfirmandoSair] = useState(false)
+
+  function iniciarSair() {
+    setConfirmandoSair(true)
+  }
+
+  function confirmarSair() {
     deslogar()
-    navigate('/')
+    navigate('/', { replace: true })
+  }
+
+  function cancelarSair() {
+    setConfirmandoSair(false)
   }
 
   const initial = aluno.nome[0].toUpperCase()
@@ -142,7 +151,23 @@ export default function Perfil() {
           </form>
 
           <div className="perfil-sair-area">
-            <button className="perfil-sair-btn" onClick={sair}>Sair da conta</button>
+            {!confirmandoSair ? (
+              <button type="button" className="perfil-sair-btn" onClick={iniciarSair}>
+                Sair da conta
+              </button>
+            ) : (
+              <div className="perfil-sair-confirm">
+                <span className="perfil-sair-msg">Tem certeza? Vai precisar do código da turma pra voltar.</span>
+                <div className="perfil-sair-actions">
+                  <button type="button" className="perfil-sair-cancel" onClick={cancelarSair}>
+                    Cancelar
+                  </button>
+                  <button type="button" className="perfil-sair-btn" onClick={confirmarSair}>
+                    Sim, sair
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

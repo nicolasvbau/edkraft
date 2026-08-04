@@ -1,7 +1,7 @@
 .perfil-page {
   min-height: 100vh;
   background: var(--bg-primary);
-  padding: 48px 24px 80px;
+  padding: 40px 24px 80px;
 }
 
 .perfil-container {
@@ -10,79 +10,84 @@
 }
 
 .perfil-header {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .perfil-subtitle {
   display: inline-block;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.6px;
   color: var(--accent-blue);
   text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--accent-blue-bg);
+  border-radius: var(--radius-full);
   margin-bottom: 12px;
 }
 
 .perfil-title {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 28px;
+  font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--text-primary);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  line-height: 1.2;
 }
 
 .perfil-description {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14.5px;
+  line-height: 1.55;
   color: var(--text-secondary);
+  max-width: 520px;
 }
 
 .perfil-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 32px;
+  padding: 28px 30px;
 }
 
 .perfil-avatar-area {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 28px;
-  padding-bottom: 24px;
+  margin-bottom: 24px;
+  padding-bottom: 22px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .perfil-avatar {
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: var(--accent-blue-bg);
-  border: 1px solid var(--accent-blue);
-  color: var(--accent-blue);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .perfil-avatar-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .perfil-avatar-nome {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .perfil-avatar-tipo {
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-size: 12.5px;
+  color: var(--text-tertiary);
 }
 
 .perfil-form {
@@ -115,18 +120,24 @@
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   font-size: 14px;
-  padding: 12px 14px;
+  padding: 11px 14px;
   border-radius: var(--radius-sm);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  line-height: 1.4;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .form-input::placeholder {
   color: var(--text-muted);
 }
 
+.form-input:hover {
+  border-color: var(--border-strong);
+}
+
 .form-input:focus {
   border-color: var(--accent-blue);
   box-shadow: 0 0 0 3px var(--accent-blue-bg);
+  outline: none;
 }
 
 .form-select {
@@ -162,17 +173,18 @@
 
 .form-submit-btn {
   background: var(--accent-blue);
-  color: var(--text-primary);
+  color: #fff;
   font-size: 14px;
-  font-weight: 700;
-  padding: 12px 28px;
+  font-weight: 500;
+  padding: 10px 22px;
   border-radius: var(--radius-sm);
-  transition: background 0.2s ease, transform 0.2s ease;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
 }
 
 .form-submit-btn:hover {
   background: var(--accent-blue-hover);
-  transform: translateY(-1px);
 }
 
 .form-optional {
@@ -289,8 +301,42 @@
 
 .perfil-sair-btn {
   background: transparent;
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: var(--accent-red);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.perfil-sair-btn:hover {
+  background: var(--accent-red-bg);
+  border-color: var(--accent-red);
+}
+
+.perfil-sair-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.perfil-sair-msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.perfil-sair-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.perfil-sair-cancel {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
   padding: 10px 20px;
   border-radius: var(--radius-sm);
   font-size: 14px;
@@ -298,6 +344,6 @@
   transition: background 0.2s;
 }
 
-.perfil-sair-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
+.perfil-sair-cancel:hover {
+  background: var(--bg-card-hover);
 }
