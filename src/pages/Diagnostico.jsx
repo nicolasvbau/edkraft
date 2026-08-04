@@ -4,6 +4,8 @@ import { profissoes } from '../data/profissoes.js'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { buscarTurma, salvarResultado } from '../lib/turma'
 import { alunoLogado } from '../lib/auth'
+import { interpretar } from '../lib/diagInterpret'
+import { baixarPDF } from '../lib/diagPDF'
 import './Diagnostico.css'
 
 const SECTIONS = [
@@ -296,13 +298,24 @@ export default function Diagnostico() {
   const answeredCount = Object.keys(answers).length
   const progress = (answeredCount / totalQuestions) * 100
 
+  // Peso da primeira tag = 2 (primária, indicativo forte)
+  // Peso das demais = 1 (secundárias)
   const areaMaxPossible = useMemo(() => {
     const max = {}
     SECTIONS.forEach(s => {
       s.questions.forEach(q => {
-        const areasThisQ = new Set()
-        q.options.forEach(o => o.tags.forEach(t => areasThisQ.add(t)))
-        areasThisQ.forEach(a => { max[a] = (max[a] || 0) + 1 })
+        // Para cada área, o máximo que ela pode fazer numa questão é
+        // se a opção escolhida tiver essa área como primária.
+        const bestPerArea = {}
+        q.options.forEach(o => {
+          o.tags.forEach((t, i) => {
+            const peso = i === 0 ? 2 : 1
+            if (!bestPerArea[t] || bestPerArea[t] < peso) bestPerArea[t] = peso
+          })
+        })
+        Object.entries(bestPerArea).forEach(([a, p]) => {
+          max[a] = (max[a] || 0) + p
+        })
       })
     })
     return max
@@ -312,10 +325,12 @@ export default function Diagnostico() {
     if (!finished) return null
     const scores = {}
     Object.values(answers).forEach(tags => {
-      tags.forEach(tag => {
-        scores[tag] = (scores[tag] || 0) + 1
+      tags.forEach((tag, i) => {
+        const peso = i === 0 ? 2 : 1
+        scores[tag] = (scores[tag] || 0) + peso
       })
     })
+
     const sorted = Object.entries(scores)
       .map(([area, score]) => {
         const max = areaMaxPossible[area] || 1
@@ -333,6 +348,8 @@ export default function Diagnostico() {
     }))
     return top
   }, [finished, answers, areaMaxPossible])
+
+  const interpretacao = useMemo(() => (results ? interpretar(results) : null), [results])
 
   useEffect(() => {
     if (!finished || !results) return
@@ -463,15 +480,47 @@ export default function Diagnostico() {
             ))}
           </div>
 
+          {interpretacao && (
+            <section className="resultado-interpretacao">
+              <div className="resultado-interp-head">
+                <h2 className="resultado-interp-titulo">{interpretacao.titulo}</h2>
+                <span className={`resultado-interp-conf conf-${interpretacao.confianca}`}>
+                  Confiança: {interpretacao.confianca}
+                </span>
+              </div>
+              <p className="resultado-interp-desc">{interpretacao.descricao}</p>
+
+              <div className="resultado-passos">
+                <h3 className="resultado-passos-titulo">Próximos passos concretos</h3>
+                <ol className="resultado-passos-lista">
+                  {interpretacao.proximos_passos.map((passo, i) => (
+                    <li key={i}>{passo}</li>
+                  ))}
+                </ol>
+              </div>
+            </section>
+          )}
+
           <div className="resultado-acoes">
-            <button className="btn btn-primary" onClick={() => navigate('/faculdades')}>
-              Ver faculdades e carreiras
+            <button
+              className="btn btn-primary"
+              onClick={() => baixarPDF({
+                aluno: alunoLogado(),
+                top: results,
+                interpretacao,
+                totalQuestions,
+              })}
+            >
+              📄 Baixar resultado em PDF
             </button>
-            <button className="btn btn-outline" onClick={handleRestart}>
-              Refazer diagnóstico
+            <button className="btn btn-outline" onClick={() => navigate('/faculdades')}>
+              Ver faculdades e carreiras
             </button>
             <button className="btn btn-outline" onClick={() => navigate('/meu-plano')}>
               Montar meu plano
+            </button>
+            <button className="btn btn-outline" onClick={handleRestart}>
+              Refazer diagnóstico
             </button>
           </div>
 
