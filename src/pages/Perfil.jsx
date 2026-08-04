@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { buscarTurma } from '../lib/turma'
+import { alunoLogado, deslogar } from '../lib/auth'
 import './Perfil.css'
 
 const estados = [
@@ -10,46 +11,22 @@ const estados = [
 ]
 
 const FORM_INICIAL = {
-  nome: '',
   telefone: '',
   nascimento: '',
   cidade: '',
   estado: '',
   sobre: '',
-  codigoTurma: '',
 }
 
 export default function Perfil() {
-  const [form, setForm] = useLocalStorage('edkraft:perfil', FORM_INICIAL)
+  const navigate = useNavigate()
+  const aluno = alunoLogado()
+  const [form, setForm] = useLocalStorage('edkraft:perfilExtra', FORM_INICIAL)
   const [saved, setSaved] = useState(false)
-  const [turmaInfo, setTurmaInfo] = useState(null)
-  const [turmaErro, setTurmaErro] = useState('')
 
   function handleChange(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
     setSaved(false)
-    if (campo === 'codigoTurma') {
-      setTurmaInfo(null)
-      setTurmaErro('')
-    }
-  }
-
-  async function validarTurma() {
-    const codigo = form.codigoTurma.trim().toUpperCase()
-    if (!codigo) {
-      setTurmaInfo(null)
-      setTurmaErro('')
-      return
-    }
-    setTurmaErro('Validando...')
-    const t = await buscarTurma(codigo)
-    if (t) {
-      setTurmaInfo(t)
-      setTurmaErro('')
-    } else {
-      setTurmaInfo(null)
-      setTurmaErro('Código não encontrado. Peça pro seu professor conferir.')
-    }
   }
 
   function handleSubmit(e) {
@@ -58,6 +35,14 @@ export default function Perfil() {
     setTimeout(() => setSaved(false), 3000)
   }
 
+  function sair() {
+    if (!confirm('Sair da sua conta? Você vai ter que entrar de novo com o código da turma.')) return
+    deslogar()
+    navigate('/')
+  }
+
+  const initial = aluno.nome[0].toUpperCase()
+
   return (
     <div className="perfil-page">
       <div className="perfil-container">
@@ -65,34 +50,23 @@ export default function Perfil() {
           <span className="perfil-subtitle">Perfil</span>
           <h1 className="perfil-title">Seus dados</h1>
           <p className="perfil-description">
-            Mantenha suas informações atualizadas para relatórios mais precisos.
+            Complete pra receber recomendações mais precisas no seu plano.
           </p>
         </header>
 
         <div className="perfil-card">
           <div className="perfil-avatar-area">
-            <div className="perfil-avatar">
-              {form.nome.trim() ? form.nome.trim()[0].toUpperCase() : 'V'}
-            </div>
+            <div className="perfil-avatar">{initial}</div>
             <div className="perfil-avatar-info">
-              <span className="perfil-avatar-nome">{form.nome.trim() || 'Seu nome'}</span>
-              <span className="perfil-avatar-tipo">Estudante</span>
+              <span className="perfil-avatar-nome">{aluno.nome}</span>
+              <span className="perfil-avatar-tipo">
+                {aluno.turmaNome ? `${aluno.turmaEscola || ''} — ${aluno.turmaNome}` : 'Estudante'}
+              </span>
+              <span className="perfil-avatar-codigo">Turma <code>{aluno.codigoTurma}</code></span>
             </div>
           </div>
 
           <form className="perfil-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="nome">Nome completo</label>
-              <input
-                id="nome"
-                type="text"
-                className="form-input"
-                placeholder="Digite seu nome completo"
-                value={form.nome}
-                onChange={(e) => handleChange('nome', e.target.value)}
-              />
-            </div>
-
             <div className="form-row">
               <div className="form-group">
                 <label className="form-label" htmlFor="telefone">Telefone</label>
@@ -148,38 +122,11 @@ export default function Perfil() {
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="codigoTurma">
-                Código da turma <span className="form-optional">(opcional)</span>
-              </label>
-              <div className="form-turma-row">
-                <input
-                  id="codigoTurma"
-                  type="text"
-                  className="form-input"
-                  placeholder="Ex: ABC123"
-                  value={form.codigoTurma}
-                  onChange={(e) => handleChange('codigoTurma', e.target.value.toUpperCase())}
-                  onBlur={validarTurma}
-                  maxLength={6}
-                />
-                <button type="button" className="form-turma-check" onClick={validarTurma}>
-                  Validar
-                </button>
-              </div>
-              {turmaInfo && (
-                <p className="form-turma-ok">
-                  ✓ {turmaInfo.escola} — {turmaInfo.nome} ({turmaInfo.serie})
-                </p>
-              )}
-              {turmaErro && <p className="form-turma-err">✗ {turmaErro}</p>}
-            </div>
-
-            <div className="form-group">
               <label className="form-label" htmlFor="sobre">Sobre você</label>
               <textarea
                 id="sobre"
                 className="form-input form-textarea"
-                placeholder="Conte um pouco sobre seus interesses, objetivos e o que você busca para o futuro..."
+                placeholder="Conte um pouco sobre seus interesses, objetivos e o que busca pro futuro..."
                 rows={5}
                 value={form.sobre}
                 onChange={(e) => handleChange('sobre', e.target.value)}
@@ -193,6 +140,10 @@ export default function Perfil() {
               {saved && <span className="form-saved-badge">✓ Dados salvos</span>}
             </div>
           </form>
+
+          <div className="perfil-sair-area">
+            <button className="perfil-sair-btn" onClick={sair}>Sair da conta</button>
+          </div>
         </div>
       </div>
     </div>

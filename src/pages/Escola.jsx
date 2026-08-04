@@ -1,22 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  listarTurmas,
-  criarTurma,
-  removerTurma,
-  professorLogado,
-  logarProfessor,
-  deslogarProfessor,
-} from '../lib/turma'
+import { listarTurmas, criarTurma, removerTurma } from '../lib/turma'
+import { professorLogadoNovo } from '../lib/auth'
 import './Escola.css'
 
 export default function Escola() {
   const navigate = useNavigate()
-  const [prof, setProf] = useState(professorLogado())
+  const prof = professorLogadoNovo()
   const [turmas, setTurmas] = useState([])
   const [carregando, setCarregando] = useState(false)
-  const [modo, setModo] = useState('login')
-  const [loginForm, setLoginForm] = useState({ nome: '', escola: '' })
+  const [modo, setModo] = useState('lista')
   const [novaTurma, setNovaTurma] = useState({ nome: '', serie: '' })
 
   useEffect(() => {
@@ -30,20 +23,7 @@ export default function Escola() {
       }
     })
     return () => { cancelled = true }
-  }, [prof])
-
-  function entrar(e) {
-    e.preventDefault()
-    if (!loginForm.nome.trim() || !loginForm.escola.trim()) return
-    logarProfessor(loginForm)
-    setProf(loginForm)
-  }
-
-  function sair() {
-    deslogarProfessor()
-    setProf(null)
-    setTurmas([])
-  }
+  }, [prof?.nome, prof?.escola])
 
   async function criar(e) {
     e.preventDefault()
@@ -67,56 +47,6 @@ export default function Escola() {
     setTurmas(atual)
   }
 
-  if (!prof) {
-    return (
-      <main className="escola-page">
-        <div className="escola-container">
-          <div className="escola-login-card">
-            <span className="section-tag">Área do educador</span>
-            <h1 className="escola-title">Painel do Professor</h1>
-            <p className="escola-desc">
-              Acompanhe os diagnósticos vocacionais da sua turma, veja tendências e apoie
-              seus alunos com dados. Sem cadastro, sem senha — só entre.
-            </p>
-
-            <form onSubmit={entrar} className="escola-login-form">
-              <div className="form-group">
-                <label className="form-label" htmlFor="nome">Seu nome</label>
-                <input
-                  id="nome"
-                  className="form-input"
-                  type="text"
-                  placeholder="Professor(a)..."
-                  value={loginForm.nome}
-                  onChange={(e) => setLoginForm({ ...loginForm, nome: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="escola">Escola</label>
-                <input
-                  id="escola"
-                  className="form-input"
-                  type="text"
-                  placeholder="Nome da instituição"
-                  value={loginForm.escola}
-                  onChange={(e) => setLoginForm({ ...loginForm, escola: e.target.value })}
-                />
-              </div>
-
-              <button type="submit" className="btn btn-primary">Entrar no painel</button>
-              <p className="escola-login-help">
-                * Versão demonstrativa. Os dados ficam apenas no seu navegador.
-              </p>
-            </form>
-          </div>
-        </div>
-      </main>
-    )
-  }
-
-  const minhasTurmas = turmas
-
   return (
     <main className="escola-page">
       <div className="escola-container">
@@ -126,7 +56,6 @@ export default function Escola() {
             <h1 className="escola-title">Olá, {prof.nome}</h1>
             <p className="escola-desc">{prof.escola}</p>
           </div>
-          <button className="escola-sair-btn" onClick={sair}>Sair</button>
         </div>
 
         <section className="escola-nova-turma">
@@ -173,14 +102,15 @@ export default function Escola() {
             </div>
           )}
 
-          {!carregando && minhasTurmas.length === 0 && modo === 'lista' && (
+          {!carregando && turmas.length === 0 && modo === 'lista' && (
             <div className="escola-empty">
-              <p>Você ainda não tem turmas. Crie a primeira e compartilhe o código com seus alunos.</p>
+              <h3>Você ainda não tem turmas</h3>
+              <p>Crie a primeira e compartilhe o código com seus alunos pra eles fazerem o diagnóstico.</p>
             </div>
           )}
 
           <div className="escola-turmas-grid">
-            {minhasTurmas.map(t => (
+            {turmas.map(t => (
               <article className="escola-turma-card" key={t.codigo}>
                 <div className="escola-turma-head">
                   <h3 className="escola-turma-nome">{t.nome}</h3>
@@ -193,7 +123,7 @@ export default function Escola() {
                 </div>
                 <p className="escola-turma-serie">{t.serie}</p>
                 <div className="escola-turma-codigo-wrap">
-                  <span className="escola-turma-codigo-label">Código da turma:</span>
+                  <span className="escola-turma-codigo-label">Código da turma</span>
                   <code className="escola-turma-codigo">{t.codigo}</code>
                 </div>
                 <button

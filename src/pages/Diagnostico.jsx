@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { profissoes } from '../data/profissoes.js'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { buscarTurma, salvarResultado } from '../lib/turma'
+import { alunoLogado } from '../lib/auth'
 import './Diagnostico.css'
 
 const SECTIONS = [
@@ -338,10 +339,7 @@ export default function Diagnostico() {
 
     let cancelled = false
     ;(async () => {
-      let perfil = null
-      try {
-        perfil = JSON.parse(localStorage.getItem('edkraft:perfil') || 'null')
-      } catch { /* ignore */ }
+      const aluno = alunoLogado()
 
       const snapshot = {
         feitoEm: new Date().toISOString(),
@@ -350,13 +348,13 @@ export default function Diagnostico() {
       if (cancelled) return
       setUltimoResultado(snapshot)
 
-      if (perfil?.codigoTurma && perfil?.nome) {
-        const turma = await buscarTurma(perfil.codigoTurma)
+      if (aluno?.codigoTurma && aluno?.nome) {
+        const turma = await buscarTurma(aluno.codigoTurma)
         if (cancelled) return
         if (turma) {
           await salvarResultado({
             turmaCodigo: turma.codigo,
-            alunoNome: perfil.nome.trim(),
+            alunoNome: aluno.nome,
             top3: snapshot.top3,
             feitoEm: snapshot.feitoEm,
           })
