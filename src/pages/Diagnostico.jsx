@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { profissoes } from '../data/profissoes.js'
+import { useLocalStorage } from '../hooks/useLocalStorage'
+import { buscarTurma, salvarResultado } from '../lib/turma'
 import './Diagnostico.css'
 
 const SECTIONS = [
@@ -284,12 +286,26 @@ export default function Diagnostico() {
   const [answers, setAnswers] = useState({})
   const [finished, setFinished] = useState(false)
   const [selectedOption, setSelectedOption] = useState(null)
+  const [ultimoResultado, setUltimoResultado] = useLocalStorage('edkraft:ultimoDiag', null)
+  const [envioTurma, setEnvioTurma] = useState(null)
 
   const section = SECTIONS[currentSection]
   const question = section?.questions[currentQuestion]
 
   const answeredCount = Object.keys(answers).length
   const progress = (answeredCount / totalQuestions) * 100
+
+  const areaMaxPossible = useMemo(() => {
+    const max = {}
+    SECTIONS.forEach(s => {
+      s.questions.forEach(q => {
+        const areasThisQ = new Set()
+        q.options.forEach(o => o.tags.forEach(t => areasThisQ.add(t)))
+        areasThisQ.forEach(a => { max[a] = (max[a] || 0) + 1 })
+      })
+    })
+    return max
+  }, [])
 
   const results = useMemo(() => {
     if (!finished) return null
@@ -299,17 +315,58 @@ export default function Diagnostico() {
         scores[tag] = (scores[tag] || 0) + 1
       })
     })
-    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1])
-    const maxScore = sorted[0]?.[1] || 1
-    const top = sorted.slice(0, 3).map(([area, score]) => ({
+    const sorted = Object.entries(scores)
+      .map(([area, score]) => {
+        const max = areaMaxPossible[area] || 1
+        const rawPercent = (score / max) * 100
+        return { area, score, max, rawPercent }
+      })
+      .sort((a, b) => b.rawPercent - a.rawPercent || b.score - a.score)
+
+    const top = sorted.slice(0, 3).map(({ area, score, rawPercent }) => ({
       area,
       score,
-      percent: Math.round((score / maxScore) * 100),
+      percent: Math.max(15, Math.min(98, Math.round(rawPercent))),
       info: AREA_INFO[area] || { icon: '📌', cor: 'var(--accent-blue)' },
       profissoes: profissoes.filter(p => p.categoria === area).slice(0, 3),
     }))
     return top
-  }, [finished, answers])
+  }, [finished, answers, areaMaxPossible])
+
+  useEffect(() => {
+    if (!finished || !results) return
+
+    let cancelled = false
+    ;(async () => {
+      let perfil = null
+      try {
+        perfil = JSON.parse(localStorage.getItem('edkraft:perfil') || 'null')
+      } catch { /* ignore */ }
+
+      const snapshot = {
+        feitoEm: new Date().toISOString(),
+        top3: results.map(r => ({ area: r.area, percent: r.percent })),
+      }
+      if (cancelled) return
+      setUltimoResultado(snapshot)
+
+      if (perfil?.codigoTurma && perfil?.nome) {
+        const turma = await buscarTurma(perfil.codigoTurma)
+        if (cancelled) return
+        if (turma) {
+          await salvarResultado({
+            turmaCodigo: turma.codigo,
+            alunoNome: perfil.nome.trim(),
+            top3: snapshot.top3,
+            feitoEm: snapshot.feitoEm,
+          })
+          if (!cancelled) setEnvioTurma({ ok: true, turma })
+        }
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [finished, results, setUltimoResultado])
 
   function handleSelect(optionIndex) {
     setSelectedOption(optionIndex)
@@ -363,6 +420,11 @@ export default function Diagnostico() {
               Baseado nas suas {totalQuestions} respostas, mapeamos as áreas que mais combinam com sua personalidade,
               interesses, habilidades e valores.
             </p>
+            {envioTurma?.ok && (
+              <div className="resultado-envio-badge">
+                ✓ Resultado enviado para a turma <strong>{envioTurma.turma.nome}</strong> ({envioTurma.turma.codigo})
+              </div>
+            )}
           </div>
 
           <div className="resultado-cards">
@@ -427,6 +489,31 @@ export default function Diagnostico() {
   return (
     <main className="diagnostico-page">
       <div className="diagnostico-container">
+        {ultimoResultado && answeredCount === 0 && (
+          <div className="diag-ultimo-card">
+            <div>
+              <span className="diag-ultimo-tag">Seu último resultado</span>
+              <div className="diag-ultimo-top">
+                {ultimoResultado.top3.map(a => (
+                  <span key={a.area} className="diag-ultimo-chip">
+                    {a.area} · {a.percent}%
+                  </span>
+                ))}
+              </div>
+              <span className="diag-ultimo-data">
+                Feito em {new Date(ultimoResultado.feitoEm).toLocaleDateString('pt-BR')}
+              </span>
+            </div>
+            <button
+              className="diag-ultimo-limpar"
+              onClick={() => setUltimoResultado(null)}
+              title="Apagar histórico"
+            >
+              Apagar
+            </button>
+          </div>
+        )}
+
         <div className="diag-progress-area">
           <div className="diag-progress-bar">
             <div className="diag-progress-fill" style={{ width: `${progress}%` }} />

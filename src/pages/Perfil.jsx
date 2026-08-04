@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useLocalStorage } from '../hooks/useLocalStorage'
+import { buscarTurma } from '../lib/turma'
 import './Perfil.css'
 
 const estados = [
@@ -7,22 +9,53 @@ const estados = [
   'SP', 'SE', 'TO',
 ]
 
+const FORM_INICIAL = {
+  nome: '',
+  telefone: '',
+  nascimento: '',
+  cidade: '',
+  estado: '',
+  sobre: '',
+  codigoTurma: '',
+}
+
 export default function Perfil() {
-  const [form, setForm] = useState({
-    nome: '',
-    telefone: '',
-    nascimento: '',
-    cidade: '',
-    estado: '',
-    sobre: '',
-  })
+  const [form, setForm] = useLocalStorage('edkraft:perfil', FORM_INICIAL)
+  const [saved, setSaved] = useState(false)
+  const [turmaInfo, setTurmaInfo] = useState(null)
+  const [turmaErro, setTurmaErro] = useState('')
 
   function handleChange(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
+    setSaved(false)
+    if (campo === 'codigoTurma') {
+      setTurmaInfo(null)
+      setTurmaErro('')
+    }
+  }
+
+  async function validarTurma() {
+    const codigo = form.codigoTurma.trim().toUpperCase()
+    if (!codigo) {
+      setTurmaInfo(null)
+      setTurmaErro('')
+      return
+    }
+    setTurmaErro('Validando...')
+    const t = await buscarTurma(codigo)
+    if (t) {
+      setTurmaInfo(t)
+      setTurmaErro('')
+    } else {
+      setTurmaInfo(null)
+      setTurmaErro('Código não encontrado. Peça pro seu professor conferir.')
+    }
   }
 
   function handleSubmit(e) {
     e.preventDefault()
+    setSaved(true)
+    setTimeout(() => setSaved(false), 3000)
   }
 
   return (
@@ -115,6 +148,33 @@ export default function Perfil() {
             </div>
 
             <div className="form-group">
+              <label className="form-label" htmlFor="codigoTurma">
+                Código da turma <span className="form-optional">(opcional)</span>
+              </label>
+              <div className="form-turma-row">
+                <input
+                  id="codigoTurma"
+                  type="text"
+                  className="form-input"
+                  placeholder="Ex: ABC123"
+                  value={form.codigoTurma}
+                  onChange={(e) => handleChange('codigoTurma', e.target.value.toUpperCase())}
+                  onBlur={validarTurma}
+                  maxLength={6}
+                />
+                <button type="button" className="form-turma-check" onClick={validarTurma}>
+                  Validar
+                </button>
+              </div>
+              {turmaInfo && (
+                <p className="form-turma-ok">
+                  ✓ {turmaInfo.escola} — {turmaInfo.nome} ({turmaInfo.serie})
+                </p>
+              )}
+              {turmaErro && <p className="form-turma-err">✗ {turmaErro}</p>}
+            </div>
+
+            <div className="form-group">
               <label className="form-label" htmlFor="sobre">Sobre você</label>
               <textarea
                 id="sobre"
@@ -130,6 +190,7 @@ export default function Perfil() {
               <button type="submit" className="form-submit-btn">
                 Salvar alterações
               </button>
+              {saved && <span className="form-saved-badge">✓ Dados salvos</span>}
             </div>
           </form>
         </div>

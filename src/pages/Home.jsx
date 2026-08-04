@@ -112,7 +112,12 @@ export default function Home() {
             <p className="hero-stat-main">
               <strong>53%</strong> dos universitários se arrependem da escolha de curso.
             </p>
-            <p className="hero-stat-sub">O EDKRAFT existe para mudar isso.</p>
+            <p className="hero-stat-sub">
+              O EDKRAFT existe para mudar isso.{' '}
+              <span className="hero-stat-source">
+                Fonte: Instituto Semesp, Mapa do Ensino Superior 2018.
+              </span>
+            </p>
           </div>
 
           <div className="hero-actions">
@@ -155,7 +160,10 @@ export default function Home() {
                 <ChartBar key={d.label} label={d.label} value={d.value} />
               ))}
             </div>
-            <p className="chart-source">Fonte: CAGED/MTE, IBGE PNAD. * 2026 = projeção.</p>
+            <p className="chart-source">
+              Estimativas EDKRAFT com base em movimentação de vagas CAGED/MTE e PNAD-IBGE (2015–2025).
+              Valores diretivos, não substituem análise setorial. * 2026 = projeção.
+            </p>
           </div>
         </div>
       </section>

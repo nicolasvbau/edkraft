@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 import './MeuPlano.css'
 
 const metasIniciais = [
@@ -86,8 +87,12 @@ const destaques = [
 
 export default function MeuPlano() {
   const navigate = useNavigate()
-  const [metas, setMetas] = useState(metasIniciais)
+  const [metas, setMetas] = useLocalStorage('edkraft:metas', metasIniciais)
   const [novaMeta, setNovaMeta] = useState('')
+
+  function removerMeta(id) {
+    setMetas((prev) => prev.filter((m) => m.id !== id))
+  }
 
   const concluidas = metas.filter((meta) => meta.concluida).length
 
@@ -142,6 +147,15 @@ export default function MeuPlano() {
                         {meta.texto}
                       </span>
                     </label>
+                    <button
+                      type="button"
+                      className="meta-remove"
+                      onClick={() => removerMeta(meta.id)}
+                      aria-label="Remover meta"
+                      title="Remover"
+                    >
+                      ×
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -219,7 +233,7 @@ export default function MeuPlano() {
                   Descubra seu perfil e receba recomendações personalizadas
                 </p>
               </div>
-              <button className="cta-btn" onClick={() => navigate('/')}>
+              <button className="cta-btn" onClick={() => navigate('/diagnostico')}>
                 Fazer diagnóstico
               </button>
             </section>

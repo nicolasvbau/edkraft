@@ -175,6 +175,71 @@
   transform: translateY(-1px);
 }
 
+.form-optional {
+  color: var(--text-tertiary);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.form-turma-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-turma-row .form-input {
+  flex: 1;
+  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.form-turma-check {
+  padding: 0 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.form-turma-check:hover {
+  background: var(--accent-blue-bg);
+  border-color: var(--accent-blue);
+}
+
+.form-turma-ok {
+  margin-top: 8px;
+  color: var(--accent-teal);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.form-turma-err {
+  margin-top: 8px;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.form-saved-badge {
+  margin-left: 16px;
+  padding: 8px 14px;
+  background: var(--accent-teal-bg);
+  color: var(--accent-teal);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  animation: fadeInBadge 0.3s ease;
+}
+
+@keyframes fadeInBadge {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 @media (max-width: 600px) {
   .perfil-page {
     padding: 32px 16px 60px;

@@ -6,6 +6,8 @@ import Faculdades from './pages/Faculdades'
 import MeuPlano from './pages/MeuPlano'
 import Perfil from './pages/Perfil'
 import Diagnostico from './pages/Diagnostico'
+import Escola from './pages/Escola'
+import PainelTurma from './pages/PainelTurma'
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/meu-plano" element={<MeuPlano />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/diagnostico" element={<Diagnostico />} />
+        <Route path="/escola" element={<Escola />} />
+        <Route path="/escola/turma/:codigo" element={<PainelTurma />} />
       </Routes>
       <EdConselheiro />
     </>

@@ -364,3 +364,72 @@
     width: 100%;
   }
 }
+
+.resultado-envio-badge {
+  margin-top: 18px;
+  padding: 12px 16px;
+  background: var(--accent-teal-bg);
+  color: var(--accent-teal);
+  border: 1px solid var(--accent-teal);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  display: inline-block;
+}
+
+.diag-ultimo-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-blue);
+  border-radius: var(--radius-md);
+}
+
+.diag-ultimo-tag {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.diag-ultimo-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.diag-ultimo-chip {
+  padding: 4px 10px;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.diag-ultimo-data {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.diag-ultimo-limpar {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.diag-ultimo-limpar:hover {
+  color: #ef4444;
+  border-color: #ef4444;
+}

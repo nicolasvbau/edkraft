@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import './Navbar.css'
 
@@ -6,6 +7,7 @@ const links = [
   { path: '/faculdades', label: 'Faculdades' },
   { path: '/meu-plano', label: 'Meu Plano' },
   { path: '/perfil', label: 'Perfil' },
+  { path: '/escola', label: 'Escola' },
 ]
 
 function EdkraftLogo() {
@@ -50,32 +52,87 @@ function EdkraftLogo() {
   )
 }
 
+function readNome() {
+  try {
+    const p = JSON.parse(localStorage.getItem('edkraft:perfil') || 'null')
+    return p?.nome?.trim() || ''
+  } catch {
+    return ''
+  }
+}
+
 export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
+  const [nome, setNome] = useState(readNome)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    setNome(readNome())
+    const onStorage = (e) => { if (e.key === 'edkraft:perfil') setNome(readNome()) }
+    const interval = setInterval(() => setNome(readNome()), 1500)
+    window.addEventListener('storage', onStorage)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      clearInterval(interval)
+    }
+  }, [location.pathname])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
+  const displayName = nome || 'Visitante'
+  const initial = displayName[0].toUpperCase()
+
+  function go(path) {
+    setMenuOpen(false)
+    navigate(path)
+  }
 
   return (
     <nav className="navbar">
       <div className="navbar-inner">
-        <div className="navbar-logo" onClick={() => navigate('/')}>
+        <div className="navbar-logo" onClick={() => go('/')}>
           <EdkraftLogo />
         </div>
-        <div className="navbar-links">
+
+        <div className={`navbar-links ${menuOpen ? 'is-open' : ''}`}>
           {links.map(link => (
             <button
               key={link.path}
               className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
-              onClick={() => navigate(link.path)}
+              onClick={() => go(link.path)}
             >
               {link.label}
             </button>
           ))}
         </div>
-        <div className="navbar-user">
-          <span className="user-avatar">V</span>
-          <span className="user-name">Visitante</span>
+
+        <div className="navbar-right">
+          <div
+            className="navbar-user"
+            onClick={() => go('/perfil')}
+            role="button"
+            tabIndex={0}
+            aria-label="Ir para perfil"
+          >
+            <span className="user-avatar">{initial}</span>
+            <span className="user-name">{displayName}</span>
+          </div>
+
+          <button
+            className={`navbar-hamburger ${menuOpen ? 'is-open' : ''}`}
+            onClick={() => setMenuOpen(v => !v)}
+            aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={menuOpen}
+          >
+            <span /><span /><span />
+          </button>
         </div>
       </div>
+
+      {menuOpen && <div className="navbar-backdrop" onClick={() => setMenuOpen(false)} />}
     </nav>
   )
 }
