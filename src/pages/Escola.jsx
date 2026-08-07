@@ -51,6 +51,26 @@ export default function Escola() {
     setTurmas(atual)
   }
 
+  const [copiadoCodigo, setCopiadoCodigo] = useState(null)
+
+  async function copiarCodigo(codigo) {
+    try {
+      await navigator.clipboard.writeText(codigo)
+      setCopiadoCodigo(codigo)
+      setTimeout(() => setCopiadoCodigo(null), 2000)
+    } catch {
+      // Fallback pra browsers sem Clipboard API
+      const ta = document.createElement('textarea')
+      ta.value = codigo
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      ta.remove()
+      setCopiadoCodigo(codigo)
+      setTimeout(() => setCopiadoCodigo(null), 2000)
+    }
+  }
+
   return (
     <main className="escola-page">
       <div className="escola-container">
@@ -137,7 +157,18 @@ export default function Escola() {
                 <p className="escola-turma-serie">{t.serie}</p>
                 <div className="escola-turma-codigo-wrap">
                   <span className="escola-turma-codigo-label">Código da turma</span>
-                  <code className="escola-turma-codigo">{t.codigo}</code>
+                  <div className="escola-turma-codigo-row">
+                    <code className="escola-turma-codigo">{t.codigo}</code>
+                    <button
+                      type="button"
+                      className={`escola-turma-copiar ${copiadoCodigo === t.codigo ? 'copiado' : ''}`}
+                      onClick={() => copiarCodigo(t.codigo)}
+                      title="Copiar código"
+                      aria-label="Copiar código da turma"
+                    >
+                      {copiadoCodigo === t.codigo ? '✓ Copiado' : 'Copiar'}
+                    </button>
+                  </div>
                 </div>
                 <button
                   className="btn btn-primary btn-block"

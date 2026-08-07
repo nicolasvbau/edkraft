@@ -7,6 +7,7 @@ import './Entrar.css'
 export default function EntrarAluno() {
   const navigate = useNavigate()
   const [nome, setNome] = useState('')
+  const [sobrenome, setSobrenome] = useState('')
   const [codigo, setCodigo] = useState('')
   const [erro, setErro] = useState('')
   const [loading, setLoading] = useState(false)
@@ -15,10 +16,15 @@ export default function EntrarAluno() {
     e.preventDefault()
     setErro('')
     const nomeTrim = nome.trim()
+    const sobrenomeTrim = sobrenome.trim()
     const codigoTrim = codigo.trim().toUpperCase()
 
     if (!nomeTrim) {
       setErro('Digita seu nome pra continuar.')
+      return
+    }
+    if (!sobrenomeTrim) {
+      setErro('Digita seu sobrenome. Assim seu professor te identifica.')
       return
     }
     if (codigoTrim.length !== 6) {
@@ -34,8 +40,9 @@ export default function EntrarAluno() {
         setLoading(false)
         return
       }
+      const nomeCompleto = `${nomeTrim} ${sobrenomeTrim}`
       logarAluno({
-        nome: nomeTrim,
+        nome: nomeCompleto,
         codigoTurma: turma.codigo,
         turmaNome: turma.nome,
         turmaEscola: turma.escola,
@@ -54,21 +61,37 @@ export default function EntrarAluno() {
 
         <h1 className="entrar-title">Entrar como aluno</h1>
         <p className="entrar-desc">
-          Digita seu nome e o código da turma que seu professor te passou.
+          Preenche teus dados e o código da turma que o professor te passou.
         </p>
 
         <form className="entrar-form" onSubmit={entrar}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="nome">Seu nome</label>
-            <input
-              id="nome"
-              className="form-input"
-              type="text"
-              placeholder="Como você quer ser chamado"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              autoFocus
-            />
+          <div className="form-row form-row-2">
+            <div className="form-group">
+              <label className="form-label" htmlFor="nome">Nome</label>
+              <input
+                id="nome"
+                className="form-input"
+                type="text"
+                placeholder="João"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                autoFocus
+                autoComplete="given-name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="sobrenome">Sobrenome</label>
+              <input
+                id="sobrenome"
+                className="form-input"
+                type="text"
+                placeholder="Silva"
+                value={sobrenome}
+                onChange={(e) => setSobrenome(e.target.value)}
+                autoComplete="family-name"
+              />
+            </div>
           </div>
 
           <div className="form-group">
@@ -81,6 +104,7 @@ export default function EntrarAluno() {
               value={codigo}
               onChange={(e) => setCodigo(e.target.value.toUpperCase())}
               maxLength={6}
+              autoComplete="off"
             />
           </div>
 

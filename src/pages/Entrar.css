@@ -134,6 +134,18 @@
   margin-top: 24px;
 }
 
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 480px) {
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .entrar-codigo-input {
   font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
   letter-spacing: 4px;
