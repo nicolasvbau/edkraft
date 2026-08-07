@@ -69,7 +69,7 @@ export default function EntrarAluno() {
   return (
     <main className="entrar-page">
       <div className="entrar-container entrar-form-container">
-        <button className="entrar-back" onClick={() => navigate('/')}>← Voltar</button>
+        <button className="entrar-back" onClick={() => navigate('/entrar')}>← Voltar</button>
 
         <h1 className="entrar-title">Entrar como aluno</h1>
         <p className="entrar-desc">

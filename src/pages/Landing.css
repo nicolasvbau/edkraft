@@ -1,0 +1,385 @@
+.landing {
+  display: flex;
+  flex-direction: column;
+}
+
+.lp-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+/* ===== HERO ===== */
+.lp-hero {
+  padding: 100px 24px 88px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 0%, rgba(59, 130, 246, 0.08), transparent 70%),
+    var(--bg-primary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.lp-hero-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lp-hero-title {
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1.4px;
+  color: var(--text-primary);
+  margin: 20px 0 18px;
+}
+
+.lp-highlight {
+  color: var(--accent-blue);
+}
+
+.lp-hero-desc {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 620px;
+  margin-bottom: 32px;
+}
+
+.lp-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.lp-hero-nota {
+  margin-top: 20px;
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+
+/* ===== SEÇÕES ===== */
+.lp-section {
+  padding: 80px 0;
+}
+
+.lp-problema {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.lp-publico {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.lp-section-head {
+  max-width: 660px;
+  margin: 0 auto 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lp-section-title {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.7px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin: 14px 0 12px;
+}
+
+.lp-section-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 580px;
+}
+
+/* ===== PROBLEMA ===== */
+.lp-problema-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.lp-problema-card {
+  padding: 26px 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.lp-problema-num {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--accent-gold);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.lp-problema-texto {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin: 0 0 14px;
+  flex: 1;
+}
+
+.lp-problema-fonte {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ===== PASSOS ===== */
+.lp-passos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.lp-passo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: start;
+  padding: 24px 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-base);
+}
+
+.lp-passo:hover {
+  border-color: var(--border-strong);
+}
+
+.lp-passo-num {
+  font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  line-height: 1.1;
+  opacity: 0.6;
+}
+
+.lp-passo-titulo {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+  letter-spacing: -0.2px;
+}
+
+.lp-passo-texto {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ===== PÚBLICO ===== */
+.lp-publico-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.lp-publico-card {
+  padding: 30px 26px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  border-top: 3px solid var(--accent-blue);
+}
+
+.lp-publico-card-escola {
+  border-top-color: var(--accent-teal);
+}
+
+.lp-publico-emoji {
+  font-size: 28px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.lp-publico-titulo {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 18px;
+  letter-spacing: -0.3px;
+}
+
+.lp-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.lp-lista li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.lp-lista li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-blue);
+}
+
+.lp-publico-card-escola .lp-lista li::before {
+  border-color: var(--accent-teal);
+}
+
+/* ===== TRANSPARÊNCIA ===== */
+.lp-transparencia {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 30px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--text-tertiary);
+  border-radius: var(--radius-lg);
+}
+
+.lp-transparencia-titulo {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+  letter-spacing: -0.3px;
+}
+
+.lp-transparencia-texto {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0 0 14px;
+}
+
+.lp-transparencia-texto:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== CTA ===== */
+.lp-cta {
+  padding: 80px 0;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.lp-cta-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lp-cta-titulo {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.7px;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+}
+
+.lp-cta-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+/* ===== FOOTER ===== */
+.lp-footer {
+  padding: 32px 24px;
+  text-align: center;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.lp-footer-link {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+  font-family: inherit;
+}
+
+.lp-footer-link:hover {
+  color: var(--accent-blue);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .lp-problema-grid,
+  .lp-passos,
+  .lp-publico-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .lp-hero {
+    padding: 64px 20px 56px;
+  }
+  .lp-hero-title {
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+  .lp-hero-desc {
+    font-size: 15.5px;
+  }
+  .lp-section {
+    padding: 56px 0;
+  }
+  .lp-section-title,
+  .lp-cta-titulo {
+    font-size: 24px;
+  }
+  .lp-cta {
+    padding: 56px 0;
+  }
+  .lp-hero-actions .btn,
+  .lp-cta .btn {
+    width: 100%;
+  }
+  .lp-transparencia {
+    padding: 24px 20px;
+  }
+}

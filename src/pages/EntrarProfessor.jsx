@@ -77,7 +77,7 @@ export default function EntrarProfessor() {
   return (
     <main className="entrar-page">
       <div className="entrar-container entrar-form-container">
-        <button className="entrar-back" onClick={() => navigate('/')}>← Voltar</button>
+        <button className="entrar-back" onClick={() => navigate('/entrar')}>← Voltar</button>
 
         <h1 className="entrar-title">
           {modo === 'entrar' ? 'Entrar como professor' : 'Criar conta de professor'}

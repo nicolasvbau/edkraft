@@ -7,6 +7,8 @@ export default function Entrar() {
   return (
     <main className="entrar-page">
       <div className="entrar-container">
+        <button className="entrar-back" onClick={() => navigate('/')}>← Sobre o EDKRAFT</button>
+
         <div className="entrar-header">
           <h1 className="entrar-title">Bem-vindo ao EDKRAFT</h1>
           <p className="entrar-desc">

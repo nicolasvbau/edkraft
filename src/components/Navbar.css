@@ -126,6 +126,17 @@
   line-height: 1.25;
 }
 
+.nav-link-entrar {
+  background: var(--accent-blue);
+  color: #fff;
+  padding: 7px 16px;
+}
+
+.nav-link-entrar:hover {
+  background: var(--accent-blue-hover);
+  color: #fff;
+}
+
 .nav-link-sair {
   color: var(--text-tertiary) !important;
 }

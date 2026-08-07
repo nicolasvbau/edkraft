@@ -129,7 +129,7 @@ export default function Navbar() {
               </div>
             </div>
           ) : (
-            <button className="nav-link" onClick={() => go('/')}>Entrar</button>
+            <button className="nav-link nav-link-entrar" onClick={() => go('/entrar')}>Entrar</button>
           )}
 
           {auth.tipo && (
