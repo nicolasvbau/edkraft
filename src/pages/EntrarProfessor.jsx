@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { entrarProfessor, cadastrarProfessor } from '../lib/auth'
+import { entrarProfessor, cadastrarProfessor, recuperarSenhaProfessor } from '../lib/auth'
 import './Entrar.css'
 
 export default function EntrarProfessor() {
@@ -53,6 +53,24 @@ export default function EntrarProfessor() {
       setErro('Erro inesperado. Tente de novo.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function esqueciSenha() {
+    setErro('')
+    setAviso('')
+    const emailTrim = email.trim()
+    if (!emailTrim) {
+      setErro('Digite seu e-mail primeiro pra receber o link de recuperação.')
+      return
+    }
+    setLoading(true)
+    const res = await recuperarSenhaProfessor(emailTrim)
+    setLoading(false)
+    if (res.erro) {
+      setErro(res.erro)
+    } else {
+      setAviso(`Link de recuperação enviado pra ${emailTrim}. Confira sua caixa de entrada e spam.`)
     }
   }
 
@@ -152,6 +170,17 @@ export default function EntrarProfessor() {
               ? (modo === 'entrar' ? 'Entrando...' : 'Criando...')
               : (modo === 'entrar' ? 'Entrar no painel' : 'Criar conta')}
           </button>
+
+          {modo === 'entrar' && (
+            <button
+              type="button"
+              className="entrar-esqueci"
+              onClick={esqueciSenha}
+              disabled={loading}
+            >
+              Esqueci minha senha
+            </button>
+          )}
         </form>
 
         <p className="entrar-rodape-mini">

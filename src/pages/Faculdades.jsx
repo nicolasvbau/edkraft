@@ -1,93 +1,32 @@
 import { useMemo, useState } from 'react'
 import { categorias, profissoes } from '../data/profissoes.js'
+import { REGIOES, filtrarFaculdades } from '../data/faculdades.js'
 import './Faculdades.css'
-
-const faculdadesPorCategoria = {
-  Tecnologia: [
-    { nome: 'USP — IME / ICMC', tipo: 'Pública' },
-    { nome: 'UNICAMP — IC', tipo: 'Pública' },
-    { nome: 'UFMG — DCC', tipo: 'Pública' },
-    { nome: 'PUC-Rio', tipo: 'Privada' },
-    { nome: 'FIAP', tipo: 'Privada' },
-  ],
-  Saúde: [
-    { nome: 'USP — FMUSP', tipo: 'Pública' },
-    { nome: 'UNICAMP — FCM', tipo: 'Pública' },
-    { nome: 'UFMG — Medicina', tipo: 'Pública' },
-    { nome: 'Einstein — Faculdade', tipo: 'Privada' },
-    { nome: 'PUC-SP', tipo: 'Privada' },
-  ],
-  Jurídica: [
-    { nome: 'USP — Largo São Francisco', tipo: 'Pública' },
-    { nome: 'UERJ — Direito', tipo: 'Pública' },
-    { nome: 'FGV Direito SP', tipo: 'Privada' },
-    { nome: 'PUC-SP — Direito', tipo: 'Privada' },
-    { nome: 'Mackenzie — Direito', tipo: 'Privada' },
-  ],
-  Negócios: [
-    { nome: 'FGV — EAESP', tipo: 'Privada' },
-    { nome: 'Insper', tipo: 'Privada' },
-    { nome: 'USP — FEA', tipo: 'Pública' },
-    { nome: 'UNICAMP — IE', tipo: 'Pública' },
-    { nome: 'IBMEC', tipo: 'Privada' },
-  ],
-  Engenharia: [
-    { nome: 'ITA', tipo: 'Pública' },
-    { nome: 'USP — Poli', tipo: 'Pública' },
-    { nome: 'UNICAMP — FEC', tipo: 'Pública' },
-    { nome: 'IME — Rio', tipo: 'Pública' },
-    { nome: 'UFSC — CTC', tipo: 'Pública' },
-  ],
-  Arquitetura: [
-    { nome: 'USP — FAU', tipo: 'Pública' },
-    { nome: 'UNICAMP — FEC', tipo: 'Pública' },
-    { nome: 'Mackenzie — Arquitetura', tipo: 'Privada' },
-    { nome: 'UFRJ — FAU', tipo: 'Pública' },
-    { nome: 'UFMG — EA', tipo: 'Pública' },
-  ],
-  Comunicação: [
-    { nome: 'USP — ECA', tipo: 'Pública' },
-    { nome: 'PUC-SP — Comunicação', tipo: 'Privada' },
-    { nome: 'ESPM', tipo: 'Privada' },
-    { nome: 'UFRJ — ECO', tipo: 'Pública' },
-    { nome: 'Cásper Líbero', tipo: 'Privada' },
-  ],
-  Artes: [
-    { nome: 'USP — ECA', tipo: 'Pública' },
-    { nome: 'UNICAMP — IA', tipo: 'Pública' },
-    { nome: 'UFRJ — Belas Artes', tipo: 'Pública' },
-    { nome: 'UNESP — IA', tipo: 'Pública' },
-    { nome: 'Santa Marcelina', tipo: 'Privada' },
-  ],
-  Educação: [
-    { nome: 'USP — FE', tipo: 'Pública' },
-    { nome: 'UNICAMP — FE', tipo: 'Pública' },
-    { nome: 'UERJ — Educação', tipo: 'Pública' },
-    { nome: 'UNESP — Pedagogia', tipo: 'Pública' },
-    { nome: 'PUC-RS — Educação', tipo: 'Privada' },
-  ],
-  Humanas: [
-    { nome: 'USP — FFLCH', tipo: 'Pública' },
-    { nome: 'UNICAMP — IFCH', tipo: 'Pública' },
-    { nome: 'UFRJ — IFCS', tipo: 'Pública' },
-    { nome: 'UnB — Humanas', tipo: 'Pública' },
-    { nome: 'PUC-Rio — CSS', tipo: 'Privada' },
-  ],
-  Biológicas: [
-    { nome: 'USP — IB', tipo: 'Pública' },
-    { nome: 'UNICAMP — IB', tipo: 'Pública' },
-    { nome: 'UNESP — Rio Claro', tipo: 'Pública' },
-    { nome: 'UFMG — ICB', tipo: 'Pública' },
-    { nome: 'UFRJ — CCS', tipo: 'Pública' },
-  ],
-}
 
 function isPositiveBadge(badge) {
   return !badge.trim().startsWith('-')
 }
 
+const UF_PARA_REGIAO = {
+  AC: 'Norte', AM: 'Norte', AP: 'Norte', PA: 'Norte', RO: 'Norte', RR: 'Norte', TO: 'Norte',
+  AL: 'Nordeste', BA: 'Nordeste', CE: 'Nordeste', MA: 'Nordeste', PB: 'Nordeste',
+  PE: 'Nordeste', PI: 'Nordeste', RN: 'Nordeste', SE: 'Nordeste',
+  DF: 'Centro-Oeste', GO: 'Centro-Oeste', MT: 'Centro-Oeste', MS: 'Centro-Oeste',
+  ES: 'Sudeste', MG: 'Sudeste', RJ: 'Sudeste', SP: 'Sudeste',
+  PR: 'Sul', RS: 'Sul', SC: 'Sul',
+}
+
+function detectarRegiaoAluno() {
+  try {
+    const perfil = JSON.parse(localStorage.getItem('edkraft:perfilExtra') || 'null')
+    if (perfil?.estado && UF_PARA_REGIAO[perfil.estado]) return UF_PARA_REGIAO[perfil.estado]
+  } catch { /* ignore */ }
+  return 'Todas'
+}
+
 export default function Faculdades() {
   const [activeCategoria, setActiveCategoria] = useState('Todas')
+  const [activeRegiao, setActiveRegiao] = useState(detectarRegiaoAluno)
   const [openPopup, setOpenPopup] = useState(null)
 
   const filtered = useMemo(() => {
@@ -113,20 +52,39 @@ export default function Faculdades() {
       </header>
 
       <div className="faculdades-body">
-        <div className="category-filters">
-          {categorias.map((cat) => (
-            <button
-              key={cat}
-              className={`category-btn ${activeCategoria === cat ? 'active' : ''}`}
-              onClick={() => setActiveCategoria(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="filter-group">
+          <span className="filter-label">Área</span>
+          <div className="category-filters">
+            {categorias.map((cat) => (
+              <button
+                key={cat}
+                className={`category-btn ${activeCategoria === cat ? 'active' : ''}`}
+                onClick={() => setActiveCategoria(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="filter-group">
+          <span className="filter-label">Região</span>
+          <div className="category-filters">
+            {REGIOES.map((reg) => (
+              <button
+                key={reg}
+                className={`category-btn ${activeRegiao === reg ? 'active' : ''}`}
+                onClick={() => setActiveRegiao(reg)}
+              >
+                {reg}
+              </button>
+            ))}
+          </div>
         </div>
 
         <p className="results-count">
           {filtered.length} {filtered.length === 1 ? 'profissão encontrada' : 'profissões encontradas'}
+          {activeRegiao !== 'Todas' && ` · faculdades filtradas por ${activeRegiao}`}
         </p>
 
         <div className="profissoes-grid">
@@ -184,23 +142,33 @@ export default function Faculdades() {
                 >
                   Onde estudar
                 </button>
-                {openPopup === p.nome && (
-                  <div className="onde-estudar-popup">
-                    <div className="popup-title">
-                      <span>Melhores faculdades</span>
-                      <button className="popup-close" onClick={() => setOpenPopup(null)}>x</button>
-                    </div>
-                    <div className="popup-list">
-                      {(faculdadesPorCategoria[p.categoria] || []).map((f) => (
-                        <div className="popup-item" key={f.nome}>
-                          <span className="popup-item-icon">🎓</span>
-                          <span className="popup-item-name">{f.nome}</span>
-                          <span className="popup-item-type">{f.tipo}</span>
+                {openPopup === p.nome && (() => {
+                  const lista = filtrarFaculdades(p.categoria, activeRegiao)
+                  return (
+                    <div className="onde-estudar-popup">
+                      <div className="popup-title">
+                        <span>{activeRegiao === 'Todas' ? 'Faculdades' : `Faculdades · ${activeRegiao}`}</span>
+                        <button className="popup-close" onClick={() => setOpenPopup(null)}>×</button>
+                      </div>
+                      {lista.length === 0 ? (
+                        <p className="popup-empty">
+                          Nenhuma faculdade catalogada nessa região. Tente outra região ou "Todas".
+                        </p>
+                      ) : (
+                        <div className="popup-list">
+                          {lista.map((f) => (
+                            <div className="popup-item" key={f.nome + f.uf}>
+                              <span className="popup-item-icon">🎓</span>
+                              <span className="popup-item-name">{f.nome}</span>
+                              <span className="popup-item-uf">{f.uf}</span>
+                              <span className="popup-item-type">{f.tipo}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  </div>
-                )}
+                  )
+                })()}
               </div>
             </article>
           ))}

@@ -124,6 +124,17 @@ export async function cadastrarProfessor({ nome, escola, email, senha }) {
   return { ok: true, precisaConfirmar: true }
 }
 
+export async function recuperarSenhaProfessor(email) {
+  if (!isSupabaseEnabled()) {
+    return { erro: 'Recuperação de senha requer Supabase configurado.' }
+  }
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+    redirectTo: `${window.location.origin}/entrar/professor`,
+  })
+  if (error) return { erro: error.message }
+  return { ok: true }
+}
+
 export async function deslogarProfessor() {
   cachedProf = null
   try { localStorage.removeItem(OLD_PROF_KEY) } catch {}

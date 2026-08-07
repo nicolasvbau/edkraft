@@ -216,6 +216,22 @@
   line-height: 1.55;
 }
 
+.entrar-esqueci {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 4px;
+  text-align: center;
+  transition: color var(--transition-fast);
+}
+
+.entrar-esqueci:hover:not(:disabled) {
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
 @media (max-width: 640px) {
   .entrar-page {
     padding: 40px 16px 60px;
