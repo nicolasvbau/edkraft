@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { buscarTurma } from '../lib/turma'
+import { buscarTurma, buscarResultadoAluno } from '../lib/turma'
 import { logarAluno } from '../lib/auth'
 import './Entrar.css'
 
@@ -47,6 +47,18 @@ export default function EntrarAluno() {
         turmaNome: turma.nome,
         turmaEscola: turma.escola,
       })
+
+      // Recupera diagnóstico já feito (ex: aluno entrou de outro dispositivo)
+      try {
+        const anterior = await buscarResultadoAluno(turma.codigo, nomeCompleto)
+        if (anterior?.top3?.length) {
+          localStorage.setItem('edkraft:ultimoDiag', JSON.stringify({
+            feitoEm: anterior.feitoEm,
+            top3: anterior.top3,
+          }))
+        }
+      } catch { /* segue mesmo se falhar */ }
+
       navigate('/inicio')
     } catch {
       setErro('Não consegui validar agora. Tenta de novo.')

@@ -121,6 +121,22 @@ export async function salvarResultado(resultado) {
   }
 }
 
+export async function buscarResultadoAluno(turmaCodigo, alunoNome) {
+  if (isSupabaseEnabled()) {
+    const { data, error } = await supabase
+      .from('resultados')
+      .select('*')
+      .eq('turma_codigo', turmaCodigo)
+      .eq('aluno_nome', alunoNome)
+      .maybeSingle()
+    if (!error && data) return fromRowResultado(data)
+    return null
+  }
+  return readJson(RESULTS_KEY, []).find(
+    r => r.turmaCodigo === turmaCodigo && r.alunoNome === alunoNome
+  ) || null
+}
+
 export async function resultadosDaTurma(codigo) {
   if (isSupabaseEnabled()) {
     const { data, error } = await supabase.from('resultados').select('*').eq('turma_codigo', codigo)

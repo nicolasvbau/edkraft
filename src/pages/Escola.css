@@ -438,3 +438,63 @@
   border-color: var(--accent-teal);
   background: var(--accent-teal-bg);
 }
+
+.stat-alerta {
+  color: var(--accent-gold) !important;
+}
+
+.painel-alerta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 18px 20px;
+  margin-top: 20px;
+  background: var(--accent-gold-bg);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-lg);
+}
+
+.painel-alerta-icon {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.painel-alerta-titulo {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+  letter-spacing: -0.2px;
+}
+
+.painel-alerta-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.painel-conf {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  text-transform: capitalize;
+}
+
+.painel-conf.conf-alta {
+  color: var(--accent-teal);
+  background: var(--accent-teal-bg);
+}
+
+.painel-conf.conf-média {
+  color: var(--accent-gold);
+  background: var(--accent-gold-bg);
+}
+
+.painel-conf.conf-baixa {
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+}

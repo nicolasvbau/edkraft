@@ -1,4 +1,3 @@
-import { pdf, Document, Page, View, Text, StyleSheet, Font } from '@react-pdf/renderer'
 import { createElement } from 'react'
 
 const HEX_AREAS = {
@@ -15,7 +14,7 @@ const HEX_AREAS = {
   Biológicas: '#14b8a6',
 }
 
-const s = StyleSheet.create({
+const criarEstilos = (StyleSheet) => StyleSheet.create({
   page: {
     padding: 40,
     fontSize: 10,
@@ -204,7 +203,7 @@ function formatarData(iso) {
   }
 }
 
-function DocumentoPDF({ aluno, top, interpretacao, totalQuestions }) {
+function montarDocumento({ Document, Page, View, Text, s, aluno, top, interpretacao, totalQuestions }) {
   const hoje = formatarData(new Date().toISOString())
 
   return createElement(Document, {},
@@ -293,9 +292,15 @@ function DocumentoPDF({ aluno, top, interpretacao, totalQuestions }) {
 
 export async function baixarPDF({ aluno, top, interpretacao, totalQuestions }) {
   try {
-    const blob = await pdf(
-      createElement(DocumentoPDF, { aluno, top, interpretacao, totalQuestions })
-    ).toBlob()
+    // Import dinâmico: a lib de PDF (~1.4MB) só carrega quando o usuário clica.
+    const { pdf, Document, Page, View, Text, StyleSheet } = await import('@react-pdf/renderer')
+    const s = criarEstilos(StyleSheet)
+
+    const doc = montarDocumento({
+      Document, Page, View, Text, s,
+      aluno, top, interpretacao, totalQuestions,
+    })
+    const blob = await pdf(doc).toBlob()
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url

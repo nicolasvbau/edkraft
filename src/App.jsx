@@ -15,6 +15,7 @@ import PainelTurma from './pages/PainelTurma'
 import Entrar from './pages/Entrar'
 import EntrarAluno from './pages/EntrarAluno'
 import EntrarProfessor from './pages/EntrarProfessor'
+import Privacidade from './pages/Privacidade'
 
 function App() {
   const [authReady, setAuthReady] = useState(false)
@@ -46,6 +47,9 @@ function App() {
         <Route path="/" element={<RedirectIfAuth><Entrar /></RedirectIfAuth>} />
         <Route path="/entrar/aluno" element={<RedirectIfAuth><EntrarAluno /></RedirectIfAuth>} />
         <Route path="/entrar/professor" element={<RedirectIfAuth><EntrarProfessor /></RedirectIfAuth>} />
+
+        {/* Público sempre acessível */}
+        <Route path="/privacidade" element={<Privacidade />} />
 
         <Route path="/inicio" element={<RequireAluno><Home /></RequireAluno>} />
         <Route path="/diagnostico" element={<RequireAluno><Diagnostico /></RequireAluno>} />

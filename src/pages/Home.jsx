@@ -231,7 +231,10 @@ export default function Home() {
       </section>
 
       <footer className="home-footer">
-        <p>© 2026 EDKRAFT — Dados: CAGED, IBGE.</p>
+        <p>© 2026 EDKRAFT — Estimativas com base em CAGED/MTE e PNAD/IBGE.</p>
+        <button className="home-footer-link" onClick={() => navigate('/privacidade')}>
+          Privacidade e Termos de Uso
+        </button>
       </footer>
     </main>
   )

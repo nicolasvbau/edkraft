@@ -37,6 +37,13 @@ export default function Entrar() {
         <p className="entrar-rodape">
           Ainda não sabe seu código de turma? Peça pro seu professor(a).
         </p>
+
+        <p className="entrar-legal">
+          Ao entrar, você concorda com nossa{' '}
+          <button className="entrar-legal-link" onClick={() => navigate('/privacidade')}>
+            Política de Privacidade e Termos de Uso
+          </button>.
+        </p>
       </div>
     </main>
   )

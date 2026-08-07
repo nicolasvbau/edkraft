@@ -291,6 +291,7 @@ export default function Diagnostico() {
   const [selectedOption, setSelectedOption] = useState(null)
   const [ultimoResultado, setUltimoResultado] = useLocalStorage('edkraft:ultimoDiag', null)
   const [envioTurma, setEnvioTurma] = useState(null)
+  const [gerandoPDF, setGerandoPDF] = useState(false)
 
   const section = SECTIONS[currentSection]
   const question = section?.questions[currentQuestion]
@@ -504,14 +505,19 @@ export default function Diagnostico() {
           <div className="resultado-acoes">
             <button
               className="btn btn-primary"
-              onClick={() => baixarPDF({
-                aluno: alunoLogado(),
-                top: results,
-                interpretacao,
-                totalQuestions,
-              })}
+              disabled={gerandoPDF}
+              onClick={async () => {
+                setGerandoPDF(true)
+                await baixarPDF({
+                  aluno: alunoLogado(),
+                  top: results,
+                  interpretacao,
+                  totalQuestions,
+                })
+                setGerandoPDF(false)
+              }}
             >
-              📄 Baixar resultado em PDF
+              {gerandoPDF ? 'Gerando PDF...' : '📄 Baixar resultado em PDF'}
             </button>
             <button className="btn btn-outline" onClick={() => navigate('/faculdades')}>
               Ver faculdades e carreiras
