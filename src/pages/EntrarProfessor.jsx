@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { entrarProfessor, cadastrarProfessor, recuperarSenhaProfessor } from '../lib/auth'
+import { validarSenha } from '../lib/senhaValidador'
 import './Entrar.css'
 
 export default function EntrarProfessor() {
@@ -24,12 +25,20 @@ export default function EntrarProfessor() {
       setErro('Preencha e-mail e senha.')
       return
     }
-    if (senha.length < 6) {
-      setErro('Senha precisa ter no mínimo 6 caracteres.')
-      return
-    }
     if (modo === 'criar' && (!nome.trim() || !escola.trim())) {
       setErro('Preencha nome e escola.')
+      return
+    }
+
+    // Validação de força só no cadastro. No login, a senha já existe.
+    if (modo === 'criar') {
+      const problema = validarSenha(senha, emailTrim, nome)
+      if (problema) {
+        setErro(problema.erro)
+        return
+      }
+    } else if (senha.length < 6) {
+      setErro('Senha inválida.')
       return
     }
 
@@ -155,7 +164,7 @@ export default function EntrarProfessor() {
               id="senha"
               className="form-input"
               type="password"
-              placeholder="Mínimo 6 caracteres"
+              placeholder={modo === 'criar' ? 'Mínimo 8 caracteres, letras e números' : 'Sua senha'}
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               autoComplete={modo === 'entrar' ? 'current-password' : 'new-password'}

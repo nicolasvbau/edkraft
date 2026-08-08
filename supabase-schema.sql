@@ -72,10 +72,18 @@ create policy "resultados: aluno insere se turma existe"
     exists (select 1 from turmas where codigo = turma_codigo)
   );
 
--- UPDATE: aluno pode reenviar o próprio resultado (mesmo (turma, nome))
-create policy "resultados: qualquer um atualiza"
+-- UPDATE: aluno pode reenviar (via upsert) apenas se a turma existir.
+-- A chave primária (turma_codigo, aluno_nome) já garante que o aluno
+-- só substitui a linha dele mesmo. Isso restringe a permissão sem
+-- quebrar o upsert do fluxo de re-fazer diagnóstico.
+create policy "resultados: aluno atualiza se turma existe"
   on resultados for update
-  using (true);
+  using (
+    exists (select 1 from turmas where codigo = turma_codigo)
+  )
+  with check (
+    exists (select 1 from turmas where codigo = turma_codigo)
+  );
 
 -- DELETE: só o professor dono da turma pode apagar resultados
 create policy "resultados: só professor dono deleta"
