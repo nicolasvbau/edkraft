@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { profissoes } from '../data/profissoes.js'
+import { SECTIONS } from '../data/diagQuestoes.js'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { buscarTurma, salvarResultado } from '../lib/turma'
 import { alunoLogado } from '../lib/auth'
@@ -8,263 +9,6 @@ import { interpretar } from '../lib/diagInterpret'
 import { baixarPDF } from '../lib/diagPDF'
 import './Diagnostico.css'
 
-const SECTIONS = [
-  {
-    title: 'Quem é você',
-    desc: 'Vamos entender sua personalidade e como você funciona.',
-    questions: [
-      {
-        text: 'Num fim de semana livre, o que mais te atrai?',
-        options: [
-          { label: 'Ficar em casa lendo, jogando ou criando algo', tags: ['Tecnologia', 'Artes'] },
-          { label: 'Sair com amigos, conversar e conhecer gente', tags: ['Comunicação', 'Negócios'] },
-          { label: 'Fazer algo ao ar livre, esporte ou explorar', tags: ['Engenharia', 'Biológicas'] },
-          { label: 'Ajudar alguém, fazer trabalho voluntário', tags: ['Saúde', 'Educação', 'Humanas'] },
-        ],
-      },
-      {
-        text: 'Quando surge um problema, como você reage?',
-        options: [
-          { label: 'Analiso com calma e busco dados antes de agir', tags: ['Tecnologia', 'Engenharia'] },
-          { label: 'Converso com pessoas pra entender melhor', tags: ['Comunicação', 'Humanas'] },
-          { label: 'Vou tentando soluções até achar uma que funcione', tags: ['Negócios', 'Arquitetura'] },
-          { label: 'Penso em como isso afeta as pessoas envolvidas', tags: ['Saúde', 'Educação'] },
-        ],
-      },
-      {
-        text: 'Como seus amigos te descreveriam?',
-        options: [
-          { label: 'Inteligente e curioso(a)', tags: ['Tecnologia', 'Biológicas'] },
-          { label: 'Comunicativo(a) e engraçado(a)', tags: ['Comunicação', 'Artes'] },
-          { label: 'Responsável e organizado(a)', tags: ['Negócios', 'Jurídica'] },
-          { label: 'Acolhedor(a) e sensível', tags: ['Saúde', 'Educação', 'Humanas'] },
-        ],
-      },
-      {
-        text: 'O que mais te incomoda no dia a dia?',
-        options: [
-          { label: 'Falta de lógica e desorganização', tags: ['Tecnologia', 'Engenharia'] },
-          { label: 'Injustiça e desigualdade', tags: ['Jurídica', 'Humanas'] },
-          { label: 'Rotina sem criatividade', tags: ['Artes', 'Comunicação', 'Arquitetura'] },
-          { label: 'Pessoas sofrendo sem necessidade', tags: ['Saúde', 'Educação'] },
-        ],
-      },
-      {
-        text: 'Quando criança, o que você mais gostava de fazer?',
-        options: [
-          { label: 'Desmontar coisas pra ver como funcionam', tags: ['Engenharia', 'Tecnologia'] },
-          { label: 'Inventar histórias, desenhar ou atuar', tags: ['Artes', 'Comunicação'] },
-          { label: 'Brincar de escola ou de médico', tags: ['Educação', 'Saúde'] },
-          { label: 'Organizar brincadeiras e liderar o grupo', tags: ['Negócios', 'Jurídica'] },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'O que te interessa',
-    desc: 'Vamos descobrir quais áreas te atraem de verdade.',
-    questions: [
-      {
-        text: 'Qual desses conteúdos você consumiria voluntariamente?',
-        options: [
-          { label: 'Documentário sobre tecnologia e inovação', tags: ['Tecnologia', 'Engenharia'] },
-          { label: 'Série sobre crimes, direito ou política', tags: ['Jurídica', 'Humanas'] },
-          { label: 'Podcast sobre empreendedorismo e finanças', tags: ['Negócios'] },
-          { label: 'Vídeo sobre saúde, psicologia ou bem-estar', tags: ['Saúde', 'Educação'] },
-        ],
-      },
-      {
-        text: 'Se pudesse resolver um problema do Brasil, qual seria?',
-        options: [
-          { label: 'Educação de qualidade pra todos', tags: ['Educação', 'Humanas'] },
-          { label: 'Acesso a saúde e saneamento', tags: ['Saúde', 'Biológicas'] },
-          { label: 'Corrupção e sistema jurídico', tags: ['Jurídica', 'Humanas'] },
-          { label: 'Defasagem tecnológica e inovação', tags: ['Tecnologia', 'Engenharia'] },
-        ],
-      },
-      {
-        text: 'Qual matéria da escola mais te atrai?',
-        options: [
-          { label: 'Matemática, Física ou Química', tags: ['Engenharia', 'Tecnologia'] },
-          { label: 'Biologia ou Ciências', tags: ['Saúde', 'Biológicas'] },
-          { label: 'História, Geografia ou Filosofia', tags: ['Humanas', 'Jurídica'] },
-          { label: 'Artes, Literatura ou Redação', tags: ['Artes', 'Comunicação'] },
-        ],
-      },
-      {
-        text: 'Qual projeto escolar te animaria mais?',
-        options: [
-          { label: 'Criar um aplicativo ou site', tags: ['Tecnologia'] },
-          { label: 'Montar uma campanha social', tags: ['Comunicação', 'Humanas'] },
-          { label: 'Fazer uma pesquisa científica', tags: ['Biológicas', 'Saúde'] },
-          { label: 'Projetar uma maquete ou espaço', tags: ['Arquitetura', 'Engenharia'] },
-        ],
-      },
-      {
-        text: 'O que te faz perder a noção do tempo?',
-        options: [
-          { label: 'Programar, montar planilhas ou resolver puzzles', tags: ['Tecnologia', 'Engenharia'] },
-          { label: 'Criar conteúdo, editar vídeo ou escrever', tags: ['Comunicação', 'Artes'] },
-          { label: 'Conversar com pessoas e ouvir histórias', tags: ['Saúde', 'Educação', 'Humanas'] },
-          { label: 'Pesquisar sobre um assunto até esgotar', tags: ['Biológicas', 'Jurídica'] },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Suas habilidades',
-    desc: 'O que você faz bem e onde tem mais facilidade.',
-    questions: [
-      {
-        text: 'Em qual dessas tarefas você se destacaria?',
-        options: [
-          { label: 'Organizar dados e encontrar padrões', tags: ['Tecnologia', 'Negócios'] },
-          { label: 'Convencer pessoas e negociar', tags: ['Negócios', 'Jurídica', 'Comunicação'] },
-          { label: 'Cuidar de alguém que precisa de ajuda', tags: ['Saúde', 'Educação'] },
-          { label: 'Criar algo visual ou artístico', tags: ['Artes', 'Arquitetura'] },
-        ],
-      },
-      {
-        text: 'As pessoas pedem sua ajuda pra quê?',
-        options: [
-          { label: 'Consertar algo ou resolver problema técnico', tags: ['Tecnologia', 'Engenharia'] },
-          { label: 'Dar conselho pessoal ou emocional', tags: ['Saúde', 'Educação', 'Humanas'] },
-          { label: 'Explicar algo de forma clara', tags: ['Educação', 'Comunicação'] },
-          { label: 'Planejar e organizar eventos ou projetos', tags: ['Negócios', 'Arquitetura'] },
-        ],
-      },
-      {
-        text: 'Qual dessas habilidades é mais forte em você?',
-        options: [
-          { label: 'Raciocínio lógico e matemático', tags: ['Tecnologia', 'Engenharia'] },
-          { label: 'Comunicação e escrita', tags: ['Comunicação', 'Jurídica', 'Artes'] },
-          { label: 'Empatia e escuta ativa', tags: ['Saúde', 'Educação', 'Humanas'] },
-          { label: 'Criatividade e visão espacial', tags: ['Artes', 'Arquitetura'] },
-        ],
-      },
-      {
-        text: 'Num trabalho em grupo, qual é seu papel natural?',
-        options: [
-          { label: 'Quem pesquisa e traz os dados', tags: ['Tecnologia', 'Biológicas'] },
-          { label: 'Quem lidera e distribui tarefas', tags: ['Negócios', 'Jurídica'] },
-          { label: 'Quem faz a apresentação final', tags: ['Comunicação', 'Artes'] },
-          { label: 'Quem cuida pra todo mundo participar', tags: ['Educação', 'Saúde', 'Humanas'] },
-        ],
-      },
-      {
-        text: 'Qual ferramenta você aprenderia mais rápido?',
-        options: [
-          { label: 'Excel, Python ou ferramentas de dados', tags: ['Tecnologia', 'Engenharia'] },
-          { label: 'Photoshop, Figma ou edição de vídeo', tags: ['Artes', 'Comunicação', 'Arquitetura'] },
-          { label: 'Técnicas de oratória e debate', tags: ['Jurídica', 'Comunicação', 'Negócios'] },
-          { label: 'Primeiros socorros ou mediação de conflitos', tags: ['Saúde', 'Humanas'] },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'O que você valoriza',
-    desc: 'Seus valores dizem muito sobre qual caminho faz sentido pra você.',
-    questions: [
-      {
-        text: 'O que é mais importante num trabalho pra você?',
-        options: [
-          { label: 'Bom salário e estabilidade financeira', tags: ['Tecnologia', 'Engenharia', 'Negócios'] },
-          { label: 'Fazer diferença na vida das pessoas', tags: ['Saúde', 'Educação', 'Humanas'] },
-          { label: 'Liberdade criativa e flexibilidade', tags: ['Artes', 'Comunicação', 'Arquitetura'] },
-          { label: 'Prestígio, respeito e reconhecimento', tags: ['Jurídica', 'Negócios'] },
-        ],
-      },
-      {
-        text: 'Qual frase mais combina com você?',
-        options: [
-          { label: '"Quero construir o futuro com tecnologia"', tags: ['Tecnologia', 'Engenharia'] },
-          { label: '"Quero defender os direitos das pessoas"', tags: ['Jurídica', 'Humanas'] },
-          { label: '"Quero curar e aliviar o sofrimento"', tags: ['Saúde'] },
-          { label: '"Quero inspirar e transformar através da arte"', tags: ['Artes', 'Comunicação', 'Educação'] },
-        ],
-      },
-      {
-        text: 'Onde você se imagina trabalhando?',
-        options: [
-          { label: 'Escritório moderno ou home office com tecnologia', tags: ['Tecnologia', 'Negócios'] },
-          { label: 'Hospital, clínica ou laboratório', tags: ['Saúde', 'Biológicas'] },
-          { label: 'Tribunal, ONG ou espaço público', tags: ['Jurídica', 'Humanas'] },
-          { label: 'Estúdio, ateliê ou espaço criativo', tags: ['Artes', 'Arquitetura', 'Comunicação'] },
-        ],
-      },
-      {
-        text: 'Como você lida com dinheiro?',
-        options: [
-          { label: 'Planejo tudo, gosto de ter controle', tags: ['Negócios', 'Engenharia'] },
-          { label: 'Gasto com experiências e coisas que amo', tags: ['Artes', 'Comunicação'] },
-          { label: 'Economizo pensando no futuro', tags: ['Tecnologia', 'Jurídica'] },
-          { label: 'Dinheiro é secundário — quero propósito', tags: ['Saúde', 'Educação', 'Humanas'] },
-        ],
-      },
-      {
-        text: 'O que te daria mais orgulho de contar pros seus netos?',
-        options: [
-          { label: 'Criei uma empresa ou produto que mudou algo', tags: ['Tecnologia', 'Negócios', 'Engenharia'] },
-          { label: 'Salvei vidas ou ajudei milhares de pessoas', tags: ['Saúde', 'Educação'] },
-          { label: 'Lutei por justiça e mudei leis', tags: ['Jurídica', 'Humanas'] },
-          { label: 'Criei obras que emocionaram pessoas', tags: ['Artes', 'Comunicação', 'Arquitetura'] },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Como você trabalha',
-    desc: 'Seu estilo de trabalho ajuda a filtrar o ambiente ideal pra você.',
-    questions: [
-      {
-        text: 'Você prefere trabalhar...',
-        options: [
-          { label: 'Sozinho(a), com foco e autonomia', tags: ['Tecnologia', 'Artes'] },
-          { label: 'Em equipe, com troca constante', tags: ['Comunicação', 'Negócios', 'Educação'] },
-          { label: 'Com pessoas que precisam de mim', tags: ['Saúde', 'Humanas'] },
-          { label: 'Com projetos que posso ver o resultado', tags: ['Engenharia', 'Arquitetura'] },
-        ],
-      },
-      {
-        text: 'Qual ritmo de trabalho combina mais com você?',
-        options: [
-          { label: 'Intenso com prazos — gosto da pressão', tags: ['Negócios', 'Comunicação', 'Jurídica'] },
-          { label: 'Constante e organizado — sem pressa', tags: ['Educação', 'Biológicas'] },
-          { label: 'Flexível — cada dia é diferente', tags: ['Artes', 'Saúde'] },
-          { label: 'Técnico — mergulho fundo num problema', tags: ['Tecnologia', 'Engenharia'] },
-        ],
-      },
-      {
-        text: 'Como você se sente com rotina repetitiva?',
-        options: [
-          { label: 'Odeio — preciso de variedade', tags: ['Artes', 'Comunicação'] },
-          { label: 'Gosto — me sinto seguro(a) com previsibilidade', tags: ['Jurídica', 'Biológicas'] },
-          { label: 'Depende — rotina com propósito tá ok', tags: ['Saúde', 'Educação'] },
-          { label: 'Prefiro desafios novos constantemente', tags: ['Tecnologia', 'Engenharia', 'Negócios'] },
-        ],
-      },
-      {
-        text: 'O que mais te estressa?',
-        options: [
-          { label: 'Lidar com muita gente ao mesmo tempo', tags: ['Tecnologia', 'Biológicas'] },
-          { label: 'Ficar parado(a) sem fazer nada', tags: ['Negócios', 'Engenharia'] },
-          { label: 'Trabalho sem significado ou impacto', tags: ['Saúde', 'Educação', 'Humanas'] },
-          { label: 'Regras rígidas que limitam criatividade', tags: ['Artes', 'Comunicação', 'Arquitetura'] },
-        ],
-      },
-      {
-        text: 'Daqui a 10 anos, onde você se vê?',
-        options: [
-          { label: 'Liderando meu próprio negócio', tags: ['Negócios', 'Tecnologia'] },
-          { label: 'Sendo referência na minha área', tags: ['Engenharia', 'Jurídica', 'Saúde'] },
-          { label: 'Viajando e trabalhando de qualquer lugar', tags: ['Tecnologia', 'Comunicação', 'Artes'] },
-          { label: 'Fazendo a diferença na minha comunidade', tags: ['Educação', 'Humanas', 'Saúde'] },
-        ],
-      },
-    ],
-  },
-]
 
 const AREA_INFO = {
   Tecnologia: { icon: '💻', cor: 'var(--accent-blue)' },
@@ -322,17 +66,28 @@ export default function Diagnostico() {
     return max
   }, [])
 
-  const results = useMemo(() => {
-    if (!finished) return null
-    const scores = {}
-    Object.values(answers).forEach(tags => {
+  const { results, traits } = useMemo(() => {
+    if (!finished) return { results: null, traits: null }
+
+    const scoresArea = {}
+    const scoresTrait = {}
+
+    Object.values(answers).forEach(ans => {
+      // Compat: se resposta antiga era só array de tags
+      const tags = Array.isArray(ans) ? ans : (ans.tags || [])
+      const tr = Array.isArray(ans) ? [] : (ans.traits || [])
+
       tags.forEach((tag, i) => {
         const peso = i === 0 ? 2 : 1
-        scores[tag] = (scores[tag] || 0) + peso
+        scoresArea[tag] = (scoresArea[tag] || 0) + peso
+      })
+      tr.forEach((t, i) => {
+        const peso = i === 0 ? 2 : 1
+        scoresTrait[t] = (scoresTrait[t] || 0) + peso
       })
     })
 
-    const sorted = Object.entries(scores)
+    const sorted = Object.entries(scoresArea)
       .map(([area, score]) => {
         const max = areaMaxPossible[area] || 1
         const rawPercent = (score / max) * 100
@@ -347,10 +102,20 @@ export default function Diagnostico() {
       info: AREA_INFO[area] || { icon: '📌', cor: 'var(--accent-blue)' },
       profissoes: profissoes.filter(p => p.categoria === area).slice(0, 3),
     }))
-    return top
+
+    // Top 3 traços ordenados
+    const topTraits = Object.entries(scoresTrait)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([t]) => t)
+
+    return { results: top, traits: topTraits }
   }, [finished, answers, areaMaxPossible])
 
-  const interpretacao = useMemo(() => (results ? interpretar(results) : null), [results])
+  const interpretacao = useMemo(
+    () => (results ? interpretar(results, traits) : null),
+    [results, traits]
+  )
 
   useEffect(() => {
     if (!finished || !results) return
@@ -392,8 +157,11 @@ export default function Diagnostico() {
     if (selectedOption === null) return
 
     const key = `${currentSection}-${currentQuestion}`
-    const tags = question.options[selectedOption].tags
-    setAnswers(prev => ({ ...prev, [key]: tags }))
+    const opt = question.options[selectedOption]
+    setAnswers(prev => ({
+      ...prev,
+      [key]: { tags: opt.tags || [], traits: opt.traits || [] },
+    }))
     setSelectedOption(null)
 
     if (currentQuestion < section.questions.length - 1) {
@@ -490,6 +258,17 @@ export default function Diagnostico() {
                 </span>
               </div>
               <p className="resultado-interp-desc">{interpretacao.descricao}</p>
+
+              {interpretacao.traits?.length > 0 && (
+                <div className="resultado-tracos">
+                  <span className="resultado-tracos-label">Seus traços dominantes:</span>
+                  <div className="resultado-tracos-list">
+                    {interpretacao.traits.map(t => (
+                      <span key={t} className="resultado-traco">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="resultado-passos">
                 <h3 className="resultado-passos-titulo">Próximos passos concretos</h3>

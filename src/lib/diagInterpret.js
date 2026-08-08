@@ -226,30 +226,91 @@ function proximosPassosLivres(top) {
   ]
 }
 
+/* ================= TRAÇOS ================= */
+
+const TRAIT_LABELS = {
+  analitico: 'analítico',
+  investigador: 'investigador',
+  criativo: 'criativo',
+  estruturado: 'organizado',
+  social: 'sociável',
+  humanista: 'humanista',
+  empreendedor: 'empreendedor',
+  pratico: 'prático',
+  artistico: 'sensível ao estético',
+}
+
+const TRAIT_FRASES = {
+  analitico: 'gosta de resolver com lógica e dados',
+  investigador: 'vai fundo pra entender antes de agir',
+  criativo: 'quer inventar coisas novas',
+  estruturado: 'valoriza ordem e previsibilidade',
+  social: 'precisa de interação com pessoas',
+  humanista: 'busca impacto humano no que faz',
+  empreendedor: 'toma iniciativa e assume risco',
+  pratico: 'quer ver resultado concreto',
+  artistico: 'tem sensibilidade estética forte',
+}
+
+function fraseDeTracos(traits) {
+  if (!traits || traits.length === 0) return ''
+  const labels = traits.map(t => TRAIT_LABELS[t] || t)
+  if (labels.length === 1) return labels[0]
+  if (labels.length === 2) return `${labels[0]} e ${labels[1]}`
+  return `${labels.slice(0, -1).join(', ')} e ${labels[labels.length - 1]}`
+}
+
+function detalheDeTracos(traits) {
+  if (!traits || traits.length === 0) return ''
+  const primeiros2 = traits.slice(0, 2)
+  const frases = primeiros2.map(t => TRAIT_FRASES[t]).filter(Boolean)
+  if (frases.length === 0) return ''
+  if (frases.length === 1) return frases[0]
+  return frases.join(', mas também ')
+}
+
 /**
  * Ponto de entrada principal.
- * Recebe o top3 e retorna interpretação estruturada.
+ * Recebe o top3 de áreas e (opcionalmente) top de traços,
+ * retorna interpretação estruturada e personalizada.
  */
-export function interpretar(top) {
+export function interpretar(top, traits = []) {
   if (!top || top.length === 0) return null
 
   const arquetipo = ARQUETIPOS.find(a => a.match(top))
+  const perfilTracos = fraseDeTracos(traits.slice(0, 3))
+  const detalhe = detalheDeTracos(traits)
 
   if (arquetipo) {
+    let descricao = arquetipo.descricao
+    if (perfilTracos) {
+      descricao = `Seus traços dominantes são ${perfilTracos}. ${descricao}`
+    }
     return {
       titulo: arquetipo.titulo,
-      descricao: arquetipo.descricao,
+      descricao,
       proximos_passos: arquetipo.proximos_passos,
       confianca: calcularConfianca(top),
+      traits: traits.slice(0, 3),
     }
   }
 
+  let descricao = interpretacaoLivre(top)
+  if (detalhe) {
+    descricao += ` Seu perfil é de alguém que ${detalhe}, o que reforça a leitura acima.`
+  }
+
   return {
-    titulo: `Perfil ${top[0].area}`,
-    descricao: interpretacaoLivre(top),
+    titulo: `Perfil ${top[0].area}${perfilTracos ? ' · ' + capitalizar(perfilTracos.split(' e ')[0]) : ''}`,
+    descricao,
     proximos_passos: proximosPassosLivres(top),
     confianca: calcularConfianca(top),
+    traits: traits.slice(0, 3),
   }
+}
+
+function capitalizar(s) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s
 }
 
 /**
