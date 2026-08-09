@@ -3,13 +3,21 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { alunoLogado, professorLogadoNovo, deslogar } from '../lib/auth'
 import './Navbar.css'
 
-const LINKS_ALUNO = [
+const LINKS_ALUNO_BASE = [
   { path: '/inicio', label: 'Início' },
   { path: '/diagnostico', label: 'Diagnóstico' },
   { path: '/faculdades', label: 'Faculdades' },
-  { path: '/meu-plano', label: 'Meu Plano' },
   { path: '/perfil', label: 'Perfil' },
 ]
+
+const LINK_MEU_PLANO = { path: '/meu-plano', label: 'Meu Plano' }
+
+function temDiagnosticoFeito() {
+  try {
+    const d = JSON.parse(localStorage.getItem('edkraft:ultimoDiag') || 'null')
+    return Boolean(d?.top3?.length)
+  } catch { return false }
+}
 
 const LINKS_PROFESSOR = [
   { path: '/escola', label: 'Minhas turmas' },
@@ -85,7 +93,16 @@ export default function Navbar() {
     window.location.href = '/'
   }
 
-  const links = auth.tipo === 'aluno' ? LINKS_ALUNO
+  const links = auth.tipo === 'aluno'
+    ? (() => {
+        // Insere "Meu Plano" só se o aluno já fez o diagnóstico
+        const base = [...LINKS_ALUNO_BASE]
+        if (temDiagnosticoFeito()) {
+          // Coloca depois de Faculdades (index 2), antes de Perfil
+          base.splice(3, 0, LINK_MEU_PLANO)
+        }
+        return base
+      })()
     : auth.tipo === 'professor' ? LINKS_PROFESSOR
     : []
 

@@ -12,21 +12,6 @@ const metasIniciais = [
   { id: 5, texto: 'Montar cronograma semanal de estudos', concluida: false },
 ]
 
-const competenciasBase = [
-  { titulo: 'Comunicação e oratória', prioridade: 'Alta', descricao: 'Apresentações, argumentação e postura profissional.' },
-  { titulo: 'Excel e análise de dados', prioridade: 'Alta', descricao: 'Fundamental em qualquer área do mercado.' },
-  { titulo: 'Inglês fluente', prioridade: 'Alta', descricao: 'Abre portas no mercado global.' },
-  { titulo: 'Liderança e trabalho em equipe', prioridade: 'Média', descricao: 'Diferencial estratégico em qualquer carreira.' },
-  { titulo: 'Pensamento crítico', prioridade: 'Contínua', descricao: 'Base pra qualquer decisão profissional.' },
-]
-
-const dicasBase = [
-  { titulo: 'Não espere o vestibular pra começar', texto: 'A preparação pro mercado começa muito antes da faculdade.' },
-  { titulo: 'Pesquise o mercado antes do curso', texto: 'Vagas, salário e demanda real da profissão.' },
-  { titulo: 'Soft skills valem tanto quanto técnicas', texto: 'Comunicação, liderança e trabalho em equipe são metade da carreira.' },
-  { titulo: 'Inglês não é opcional', texto: 'Em quase toda área, fluência em inglês abre 2x mais oportunidades.' },
-]
-
 export default function MeuPlano() {
   const navigate = useNavigate()
   const [metas, setMetas] = useLocalStorage('edkraft:metas', metasIniciais)
@@ -35,9 +20,6 @@ export default function MeuPlano() {
 
   const plano = useMemo(() => gerarPlano(ultimoResultado), [ultimoResultado])
   const temDiagnostico = Boolean(plano)
-
-  const competencias = plano?.competencias || competenciasBase
-  const dicas = plano?.dicas || dicasBase
 
   function toggleMeta(id) {
     setMetas((prev) =>
@@ -59,15 +41,42 @@ export default function MeuPlano() {
 
   const concluidas = metas.filter((meta) => meta.concluida).length
 
+  // Sem diagnóstico: mostra tela bloqueada, não faz sentido montar plano genérico
+  if (!temDiagnostico) {
+    return (
+      <div className="meuplano-page">
+        <div className="meuplano-container">
+          <div className="plano-locked">
+            <div className="plano-locked-icon">🔒</div>
+            <h1 className="plano-locked-titulo">Seu plano fica pronto depois do diagnóstico</h1>
+            <p className="plano-locked-desc">
+              Aqui vão aparecer competências e dicas específicas pro seu perfil vocacional —
+              não faz sentido montar isso sem entender primeiro pra onde você tende.
+              O diagnóstico leva menos de 10 minutos.
+            </p>
+            <button className="btn btn-primary btn-lg" onClick={() => navigate('/diagnostico')}>
+              Fazer diagnóstico agora
+            </button>
+            <p className="plano-locked-nota">
+              Depois de responder, essa página é liberada com um plano personalizado.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const competencias = plano.competencias
+  const dicas = plano.dicas
+
   return (
     <div className="meuplano-page">
       <div className="meuplano-container">
         <header className="meuplano-header">
           <h1 className="meuplano-title">Seu plano de desenvolvimento</h1>
           <p className="meuplano-subtitle">
-            {temDiagnostico
-              ? `Personalizado pro seu perfil ${plano.areaPrincipal}${plano.areaSecundaria ? ' + ' + plano.areaSecundaria : ''}.`
-              : 'Um plano geral pra você. Faça o diagnóstico pra receber recomendações específicas.'}
+            Personalizado pro seu perfil {plano.areaPrincipal}
+            {plano.areaSecundaria ? ' + ' + plano.areaSecundaria : ''}.
           </p>
         </header>
 
@@ -122,30 +131,10 @@ export default function MeuPlano() {
           </aside>
 
           <main className="meuplano-main">
-            {!temDiagnostico && (
-              <section className="plano-alerta-card">
-                <div className="plano-alerta-icon">💡</div>
-                <div>
-                  <h3 className="plano-alerta-titulo">Faça o diagnóstico pra desbloquear o plano personalizado</h3>
-                  <p className="plano-alerta-desc">
-                    O que você vê abaixo é genérico. Depois do diagnóstico, vamos mostrar exatamente o que
-                    desenvolver com base no seu perfil.
-                  </p>
-                </div>
-                <button className="btn btn-primary" onClick={() => navigate('/diagnostico')}>
-                  Fazer diagnóstico
-                </button>
-              </section>
-            )}
-
             <section className="plano-section">
-              <h2 className="section-title">
-                {temDiagnostico ? `Competências pra ${plano.areaPrincipal}` : 'Competências pro Ensino Médio'}
-              </h2>
+              <h2 className="section-title">Competências pra {plano.areaPrincipal}</h2>
               <p className="section-subtitle">
-                {temDiagnostico
-                  ? `Priorizadas pra quem tem perfil ${plano.areaPrincipal.toLowerCase()}.`
-                  : 'Competências que fazem diferença em qualquer área profissional.'}
+                Priorizadas pra quem tem perfil {plano.areaPrincipal.toLowerCase()}.
               </p>
 
               <div className="competencias-lista">
@@ -166,9 +155,7 @@ export default function MeuPlano() {
             <section className="plano-section">
               <h2 className="section-title">Dicas práticas</h2>
               <p className="section-subtitle">
-                {temDiagnostico
-                  ? `Selecionadas pra quem quer seguir carreira em ${plano.areaPrincipal}.`
-                  : 'Válidas pra qualquer perfil profissional.'}
+                Selecionadas pra quem quer seguir carreira em {plano.areaPrincipal}.
               </p>
               <div className="dicas-grid">
                 {dicas.map((dica) => (
@@ -180,19 +167,17 @@ export default function MeuPlano() {
               </div>
             </section>
 
-            {temDiagnostico && (
-              <section className="cta-card">
-                <div className="cta-texto">
-                  <h3 className="cta-titulo">Quer refazer o diagnóstico?</h3>
-                  <p className="cta-descricao">
-                    Se seus interesses mudaram, refazer o teste atualiza esse plano.
-                  </p>
-                </div>
-                <button className="cta-btn" onClick={() => navigate('/diagnostico')}>
-                  Refazer diagnóstico
-                </button>
-              </section>
-            )}
+            <section className="cta-card">
+              <div className="cta-texto">
+                <h3 className="cta-titulo">Quer refazer o diagnóstico?</h3>
+                <p className="cta-descricao">
+                  Se seus interesses mudaram, refazer o teste atualiza esse plano.
+                </p>
+              </div>
+              <button className="cta-btn" onClick={() => navigate('/diagnostico')}>
+                Refazer diagnóstico
+              </button>
+            </section>
           </main>
         </div>
       </div>
