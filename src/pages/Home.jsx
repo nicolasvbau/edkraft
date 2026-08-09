@@ -204,7 +204,7 @@ export default function Home() {
       <section className="section diagnostico-section" id="diagnostico">
         <div className="section-inner">
           <div className="section-header">
-            <span className="section-tag">Diagnóstico vocacional</span>
+            <span className="section-tag">Diagnóstico de perfil</span>
             <h2 className="section-title">Descubra seu caminho em minutos</h2>
             <p className="section-desc">
               Um questionário rápido que cruza seus interesses e habilidades com dados reais do mercado de

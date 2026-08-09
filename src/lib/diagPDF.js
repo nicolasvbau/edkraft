@@ -221,7 +221,7 @@ function montarDocumento({ Document, Page, View, Text, s, aluno, top, interpreta
       ),
 
       // TITLE
-      createElement(Text, { style: s.title }, 'Seu perfil vocacional'),
+      createElement(Text, { style: s.title }, 'Seu perfil de carreira'),
       createElement(Text, { style: s.subtitle },
         `Análise baseada em ${totalQuestions} respostas — personalidade, interesses, habilidades e valores.`
       ),
@@ -281,7 +281,7 @@ function montarDocumento({ Document, Page, View, Text, s, aluno, top, interpreta
 
       // FOOTER
       createElement(View, { style: s.footer, fixed: true },
-        createElement(Text, {}, 'EDKRAFT — Diagnóstico vocacional baseado em dados'),
+        createElement(Text, {}, 'EDKRAFT — Descoberta de carreira baseada em dados'),
         createElement(Text, {},
           'Não substitui acompanhamento profissional. CVV: 188 (24h)'
         ),

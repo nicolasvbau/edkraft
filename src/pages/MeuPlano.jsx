@@ -50,7 +50,7 @@ export default function MeuPlano() {
             <div className="plano-locked-icon">🔒</div>
             <h1 className="plano-locked-titulo">Seu plano fica pronto depois do diagnóstico</h1>
             <p className="plano-locked-desc">
-              Aqui vão aparecer competências e dicas específicas pro seu perfil vocacional —
+              Aqui vão aparecer competências e dicas específicas pro seu perfil de carreira —
               não faz sentido montar isso sem entender primeiro pra onde você tende.
               O diagnóstico leva menos de 10 minutos.
             </p>

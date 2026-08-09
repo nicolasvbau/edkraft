@@ -21,7 +21,7 @@ export default function Entrar() {
             <span className="entrar-emoji">🎓</span>
             <h2 className="entrar-card-title">Sou aluno</h2>
             <p className="entrar-card-desc">
-              Descobrir minha carreira, fazer o diagnóstico vocacional e acompanhar meu plano de desenvolvimento.
+              Descobrir minha carreira, fazer o diagnóstico de perfil e acompanhar meu plano de desenvolvimento.
             </p>
             <span className="entrar-card-req">Precisa do código da turma</span>
           </button>
@@ -30,7 +30,7 @@ export default function Entrar() {
             <span className="entrar-emoji">👩‍🏫</span>
             <h2 className="entrar-card-title">Sou professor</h2>
             <p className="entrar-card-desc">
-              Criar turmas, gerar códigos, acompanhar o perfil vocacional dos alunos e ver relatórios agregados.
+              Criar turmas, gerar códigos, acompanhar o perfil de carreira dos alunos e ver relatórios agregados.
             </p>
             <span className="entrar-card-req">Sem cadastro — nome e escola</span>
           </button>

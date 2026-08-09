@@ -43,7 +43,7 @@ const COMO_FUNCIONA = [
 ]
 
 const PARA_ALUNO = [
-  'Diagnóstico vocacional com 3 áreas de maior afinidade',
+  'Diagnóstico de perfil com 3 áreas de maior afinidade',
   'Relatório em PDF pra levar pra casa e mostrar aos pais',
   'Plano de desenvolvimento personalizado pro seu perfil',
   'Catálogo de profissões com salário, demanda e risco de automação',
@@ -51,7 +51,7 @@ const PARA_ALUNO = [
 ]
 
 const PARA_ESCOLA = [
-  'Painel com a distribuição vocacional da turma inteira',
+  'Painel com a distribuição de perfis de carreira da turma inteira',
   'Identificação de alunos com perfil indefinido, que precisam de conversa',
   'Exportação em CSV pra relatórios e reuniões pedagógicas',
   'Dados isolados por professor — cada um vê só as próprias turmas',
@@ -66,13 +66,13 @@ export default function Landing() {
       {/* HERO */}
       <section className="lp-hero">
         <div className="lp-hero-inner">
-          <span className="section-tag">Orientação vocacional para o Ensino Médio</span>
+          <span className="section-tag">Descoberta de carreira para o Ensino Médio</span>
           <h1 className="lp-hero-title">
             Ajude seus alunos a escolherem o futuro com{' '}
             <span className="lp-highlight">dados</span>, não com achismo
           </h1>
           <p className="lp-hero-desc">
-            O EDKRAFT combina diagnóstico de perfil vocacional com informação real de mercado
+            O EDKRAFT combina diagnóstico de perfil com informação real de mercado
             para que cada estudante entenda quem é antes de decidir o que fazer.
           </p>
           <div className="lp-hero-actions">
@@ -83,7 +83,7 @@ export default function Landing() {
               Como tratamos os dados
             </button>
           </div>
-          <p className="lp-hero-nota">Gratuito para escolas. Sem instalação, sem contrato.</p>
+          <p className="lp-hero-nota">Feito para escolas que levam a orientação de carreira a sério.</p>
         </div>
       </section>
 

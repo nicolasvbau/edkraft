@@ -18,7 +18,7 @@ export default function Privacidade() {
         <section className="legal-section">
           <h2>1. Quem somos</h2>
           <p>
-            O EDKRAFT é uma plataforma educacional de orientação vocacional voltada a estudantes
+            O EDKRAFT é uma plataforma educacional de descoberta de carreira voltada a estudantes
             do Ensino Médio brasileiro. Oferecemos um diagnóstico de perfil, informações sobre
             carreiras e um painel para acompanhamento por professores e coordenadores.
           </p>
@@ -73,7 +73,7 @@ export default function Privacidade() {
         <section className="legal-section">
           <h2>4. Como usamos os dados</h2>
           <ul>
-            <li>Gerar o diagnóstico vocacional e o plano de desenvolvimento do aluno.</li>
+            <li>Gerar o diagnóstico de perfil e o plano de desenvolvimento do aluno.</li>
             <li>Permitir que o professor acompanhe o panorama da turma.</li>
             <li>Gerar o relatório em PDF que o aluno pode baixar.</li>
           </ul>

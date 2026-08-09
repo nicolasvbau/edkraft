@@ -1,5 +1,5 @@
 /**
- * Banco de questões do diagnóstico vocacional EDKRAFT.
+ * Banco de questões do diagnóstico de perfil de carreira EDKRAFT.
  *
  * Design das perguntas:
  * 1) Cenários concretos ("Você tá na fila...") em vez de "eu gosto de X"

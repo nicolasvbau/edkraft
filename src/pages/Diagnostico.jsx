@@ -199,7 +199,7 @@ export default function Diagnostico() {
         <div className="diagnostico-container">
           <div className="resultado-header">
             <span className="section-tag">Resultado do diagnóstico</span>
-            <h1 className="resultado-titulo">Seu perfil vocacional</h1>
+            <h1 className="resultado-titulo">Seu perfil de carreira</h1>
             <p className="resultado-desc">
               Baseado nas suas {totalQuestions} respostas, mapeamos as áreas que mais combinam com sua personalidade,
               interesses, habilidades e valores.
